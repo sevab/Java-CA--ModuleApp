@@ -11,6 +11,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
  *
@@ -29,12 +30,12 @@ public class ModuleAppTest {
     public static void tearDownClass() {
     }
     
-    @Test
-    public void testFirstLine() throws FileNotFoundException, IOException {
-        String expected = "\"ECM1401\",\"Programming\",\"Jonathan Fieldsend\",\"J.E.Fieldsend@exeter.ac.uk\"";
-        String actual = ModuleApp.loadCSVFile("/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/modules.csv");
-        Assert.assertEquals(expected, actual);
-    }
+//    @Ignore @Test
+//    public void testFirstLine() throws FileNotFoundException, IOException {
+//        String expected = "\"ECM1401\",\"Programming\",\"Jonathan Fieldsend\",\"J.E.Fieldsend@exeter.ac.uk\"";
+//        String actual = ModuleApp.loadCSVFile("/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/modules.csv");
+//        Assert.assertEquals(expected, actual);
+//    }
     
     @Test
     public void testModuleCodeColumn() throws FileNotFoundException, IOException {
@@ -42,7 +43,7 @@ public class ModuleAppTest {
         ModuleApp test = new ModuleApp();
         test.loadCSVFile("/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/modules.csv");
         for (int i = 0; i < 3 ; i++) {
-            Assert.assertEquals(expectedModuleCodes[i], test.getModulesCodes()[i]);
+            Assert.assertEquals(expectedModuleCodes[i], test.getDatabase()[i][0]);
         }
         
     }

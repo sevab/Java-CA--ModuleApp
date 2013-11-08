@@ -8,40 +8,47 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
  * @author sevabaskin
  */
 public class ModuleApp {
-    String[] moduleCodes;
-    
+    String[][] database;
+    int lengthOfDatabase;    
+    Pattern csvRegex;
+
+
     ModuleApp() {
+    	this.database = new String[100][4];
+    	this.lengthOfDatabase = 0;
+    	this.csvRegex = Pattern.compile("\"(.*?)\"");
     	
     }
     
     
     // maybe no need to throw IOException
-    public static String loadCSVFile(String fileDirectory) throws FileNotFoundException, IOException {
+    public void loadCSVFile(String fileDirectory) throws FileNotFoundException, IOException {
         BufferedReader reader = new BufferedReader(new FileReader(fileDirectory));
-        return reader.readLine();
         
-//        String[] lines = new String[100];
-//        String line = null;
-//        for (int j = 0; j < 100 && (line = reader.readLine()) != null; j++) {
-//            lines[j] = line;
-//        }    
-
-
-       for (int i = 0; i < 100 && (line = reader.readLine()) != null; i++) {
-           lines[i] = line;
-       }    
+        String line;
+		while ((line = reader.readLine()) != null) {
+			Matcher csvMatcher = csvRegex.matcher(line);
+			for (int j=0; j<4;j++) {
+				csvMatcher.find();
+			   	database[lengthOfDatabase][j] = csvMatcher.group(1);
+			   	System.out.println(database[lengthOfDatabase][j]);
+			}
+			lengthOfDatabase++;
+		}
 
 
     }
     
     
-    public String[] getModulesCodes() {
-        return null;
+    public String[][] getDatabase() {
+        return database;
     }
 }
