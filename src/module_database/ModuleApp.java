@@ -17,19 +17,20 @@ import java.util.regex.Pattern;
  */
 public class ModuleApp {
     String[][] database;
-    int lengthOfDatabase;    
+    int elementsInDatabase;    
     Pattern csvRegex;
 
 
     ModuleApp() {
     	this.database = new String[100][4];
-    	this.lengthOfDatabase = 0;
+    	this.elementsInDatabase = 0;
     	this.csvRegex = Pattern.compile("\"(.*?)\"");
     	
     }
     
     
     // maybe no need to throw IOException
+    // normalize all queries by upcasing; normalize results as well?
     public void loadCSVFile(String fileDirectory) throws FileNotFoundException, IOException {
         BufferedReader reader = new BufferedReader(new FileReader(fileDirectory));
         
@@ -38,13 +39,28 @@ public class ModuleApp {
 			Matcher csvMatcher = csvRegex.matcher(line);
 			for (int j=0; j<4;j++) {
 				csvMatcher.find();
-			   	database[lengthOfDatabase][j] = csvMatcher.group(1);
-			   	System.out.println(database[lengthOfDatabase][j]);
+			   	database[elementsInDatabase][j] = csvMatcher.group(1);
+			   	// System.out.println(database[elementsInDatabase][j]);
 			}
-			lengthOfDatabase++;
+			elementsInDatabase++;
 		}
+    }
 
 
+    int findModuleRowByCode(String moduleCodeQuery) {
+    	int resultRow = -1; // will be returned if nothing's found
+    	for (int i=0; i < this.elementsInDatabase ; i++) {
+    		if (this.database[i][0].equals(moduleCodeQuery)) {
+    			resultRow = i;
+    			break;
+    		}
+    	}
+    	return resultRow;
+    }
+
+    int[] findModuleRowsByYear(String moduleYearQuery) {
+    	// Finish testing
+    	return int[] {100,101,102};
     }
     
     
