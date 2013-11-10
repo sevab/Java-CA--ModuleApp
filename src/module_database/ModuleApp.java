@@ -24,11 +24,16 @@ public class ModuleApp {
     ModuleApp() {
     	this.database = new String[100][4];
     	this.elementsInDatabase = 0;
+
+    	// Move to the specific methods if not used in multiple places:
     	this.csvRegex = Pattern.compile("\"(.*?)\"");
 		this.moduleYearRegex = Pattern.compile("(?<=^...)(1|2|3|M|m)");
     }
     
+    // Accessor methods
+    public String[][] getDatabase() { return database; }
     
+
     // maybe no need to throw IOException
     // normalize all queries by upcasing; normalize results as well?
     // Expand database if reached the limit (keep on adding until an exception is thrown?)
@@ -70,29 +75,40 @@ public class ModuleApp {
     		moduleYearMatcher.find();
 		   	String candidateResult = moduleYearMatcher.group();
 
-    		if (candidateResult.equals(moduleYearQuery)) {
+    		if (candidateResult.equals(moduleYearQuery))
     			resultRows = resultRows + i + ",";
-    		}
     	}
 		// System.out.println(resultRows);
-    	// Parse resultRow string into resultsArray
-    	String[] tempResultArray = resultRows.split(",");
-		int[] resultsArray = new int[tempResultArray.length];
-		for (int i = 0; i < tempResultArray.length; i++) {
-			resultsArray[i] = Integer.parseInt(tempResultArray[i]);
-		}
-
-    	return resultsArray;
+    	return convertStringToIntArray(resultRows);
     }
 
     int[] findModuleRowsByLeaderName(String moduleLeaderNameQuery) {
+    	String resultRows = ""; // if nothing's found, assign an empty array.
+    	Pattern moduleLeaderNameRegex = Pattern.compile(moduleLeaderNameQuery);
 
-    	int[] result = {-1};
-    	return result;
+    	for (int i=0; i < this.elementsInDatabase ; i++) {
+    		Matcher moduleLeaderNameMatcher = moduleLeaderNameRegex.matcher(database[i][2]);
+
+    		if (moduleLeaderNameMatcher.lookingAt())
+    			resultRows = resultRows + i + ",";
+    	}
+		// System.out.println(resultRows);
+
+    	return convertStringToIntArray(resultRows);
+    }
+
+
+
+
+
+    // Helpers
+    int[] convertStringToIntArray(String str) {
+		String[] strArray = str.split(",");
+		int[] intArray = new int[strArray.length];
+		for (int i = 0; i < strArray.length; i++)
+			intArray[i] = Integer.parseInt(strArray[i]);		
+		return intArray;
     }
     
-    
-    public String[][] getDatabase() {
-        return database;
-    }
+
 }

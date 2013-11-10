@@ -115,7 +115,7 @@ public class ModuleAppTest {
             
 
             // System.out.println(actualSearchResult + " " + moduleCodeQuery + " " + expectedSearchResults[i]);
-            for (int j=0; j<3; j++) {
+            for (int j=0; j<5; j++) {
                 Assert.assertEquals(expectedSearchResult[j], actualSearchResult[j]);  
             }
         }
