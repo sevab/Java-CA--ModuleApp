@@ -142,6 +142,40 @@ public class ModuleAppTest {
             }
         }
     }
+    
+    @Test
+    public void testGettingFullModuleInfoAsString() throws FileNotFoundException, IOException {
+        ModuleApp test = new ModuleApp();
+        test.loadCSVFile("/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/modules.csv");
+        String expected = "ECM1401 Programming Jonathan Fieldsend J.E.Fieldsend@exeter.ac.uk";
+        String actual = test.getModuleInfo(0);
+        Assert.assertEquals(expected, actual);
+    }
+
+    // Next: Verify Duplicates
+    @Test
+    public void testModuleUpdate() throws FileNotFoundException, IOException {
+        ModuleApp test = new ModuleApp();
+        test.loadCSVFile("/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/modules.csv");
+        test.updateModule(1, "ECM9999", "Test Name", "Test Name", "test@email.co.uk");
+        String expected = "ECM9999 Test Name Test Name test@email.co.uk";
+        String actual = test.getModuleInfo(1);
+        Assert.assertEquals(expected, actual);
+    }
+
+
+
+
+    // @Test
+    // public void testSearchByModuleLeaderEmailCornerCases() throws FileNotFoundException, IOException {
+    //     ModuleApp test = new ModuleApp();
+    //     test.loadCSVFile("/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/modules.csv");
+    //         int[] expectedSearchResult = {-1};
+    //         int[] actualSearchResult = test.findModuleRowsByLeaderEmail("");
+    //         Assert.assertArrayEquals(expectedSearchResult, actualSearchResult);  
+    // }
+
+    // TODO: Test corener cases (e.g. if nothing found, exceptions, etc). Maybe should be handled by UI
 
     
 }

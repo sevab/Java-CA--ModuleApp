@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  *
  * @author sevabaskin
  */
-public class ModuleApp {
+class ModuleApp {
     String[][] database;
     int elementsInDatabase;    
     Pattern csvRegex;
@@ -32,15 +32,13 @@ public class ModuleApp {
 
     
     // Accessor methods
-    public String[][] getDatabase() { return database; }
+    String[][] getDatabase() { return database; }
     
 
-    // maybe no need to throw IOException
-    // normalize all queries by upcasing; normalize results as well?
-    // Expand database if reached the limit (keep on adding until an exception is thrown?)
-    public void loadCSVFile(String fileDirectory) throws FileNotFoundException, IOException {
+    // TODO: normalize all queries by upcasing; normalize results as well?
+    // TODO: Expand database if reached the limit (keep on adding until an exception is thrown?)
+    void loadCSVFile(String fileDirectory) throws FileNotFoundException, IOException {
         BufferedReader reader = new BufferedReader(new FileReader(fileDirectory));
-        
         String line;
 		while ((line = reader.readLine()) != null) {
 			Matcher csvMatcher = csvRegex.matcher(line);
@@ -55,7 +53,7 @@ public class ModuleApp {
 
 
     int findModuleRowByCode(String moduleCodeQuery) {
-    	int resultRow = -1; // will be returned if nothing's found
+    	int resultRow = -1;
     	for (int i=0; i < this.elementsInDatabase ; i++) {
     		if (this.database[i][0].equals(moduleCodeQuery)) {
     			resultRow = i;
@@ -65,45 +63,42 @@ public class ModuleApp {
     	return resultRow;
     }
 
-    // Describe how strings are used to generte dynamyc-length arrays
-    // or redo by increasing array length every time (see profiler to see which one's faster); go w/ elgnt solution
+    // JavaDoc: Describe how strings are used to generte dynamyc-length arrays
+    
     int[] findModuleRowsByYear(String moduleYearQuery) {
-    	String resultRows = ""; // if nothing's found, assign an empty array.
-    	
+    	// if (moduleYearQuery.length() == 0) return new int[]{-1};
 
+    	String resultRows = ""; // if nothing's found, assign an empty array.	
     	for (int i=0; i < this.elementsInDatabase ; i++) {
     		Matcher moduleYearMatcher = moduleYearRegex.matcher(database[i][0]);
     		moduleYearMatcher.find();
 		   	String candidateResult = moduleYearMatcher.group();
-
     		if (candidateResult.equals(moduleYearQuery))
     			resultRows = resultRows + i + ",";
     	}
     	return convertStringToIntArray(resultRows);
     }
 
-
     int[] findModuleRowsByLeaderName(String moduleLeaderNameQuery) {
+    	// if (moduleLeaderNameQuery.length() == 0) return new int[]{-1};
+
     	String resultRows = ""; // if nothing's found, assign an empty array.
     	Pattern moduleLeaderNameRegex = Pattern.compile(moduleLeaderNameQuery);
-
     	for (int i=0; i < this.elementsInDatabase ; i++) {
     		Matcher moduleLeaderNameMatcher = moduleLeaderNameRegex.matcher(database[i][2]);
-
     		if (moduleLeaderNameMatcher.lookingAt())
     			resultRows = resultRows + i + ",";
     	}
-
     	return convertStringToIntArray(resultRows);
     }
 
     int[] findModuleRowsByLeaderEmail(String moduleLeaderEmailQuery) {
+    	// if (moduleLeaderEmailQuery.length() == 0) return new int[]{-1};
+
     	String resultRows = ""; // if nothing's found, assign an empty array.
     	Pattern moduleLeaderEmailRegex = Pattern.compile(moduleLeaderEmailQuery);
-
     	for (int i=0; i < this.elementsInDatabase ; i++) {
     		Matcher moduleLeaderEmailMatcher = moduleLeaderEmailRegex.matcher(database[i][3]);
-
     		if (moduleLeaderEmailMatcher.lookingAt())
     			resultRows = resultRows + i + ",";
     	}
@@ -111,9 +106,17 @@ public class ModuleApp {
     }
 
 
+    // DON'T FORGET TO CLOSE FILE
+
+
+
+    String getModuleInfo(int moduleRowNumber) {
+    	String result = database[moduleRowNumber][0] + " " + database[moduleRowNumber][1] + " " + database[moduleRowNumber][2] + " " + database[moduleRowNumber][3];
+    	return result;
+    }
 
     // Helpers
-    int[] convertStringToIntArray(String str) {
+    private int[] convertStringToIntArray(String str) {
 		String[] strArray = str.split(",");
 		int[] intArray = new int[strArray.length];
 		for (int i = 0; i < strArray.length; i++)
