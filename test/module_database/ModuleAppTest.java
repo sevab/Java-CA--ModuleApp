@@ -80,20 +80,43 @@ public class ModuleAppTest {
     @Test
     public void testSearchByModuleYear() throws FileNotFoundException, IOException {
         String[] testQueries = {"1", "2", "3", "M"};
-        int[] expectedSearchResults = { {0,1,2}, {10,11,12}, {21,22,23}, {33,34,35}};
+        int[][] expectedSearchResults = { {0,1,2}, {10,11,12}, {21,22,23}, {33,34,35}};
 
         ModuleApp test = new ModuleApp();
         test.loadCSVFile("/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/modules.csv");
 
         // Loop over test queries
-        for (int i=0; i<5; i++) {
+        for (int i=0; i<4; i++) {
             String moduleYearQuery = testQueries[i];
-            int[] actualSearchResult = test.findModuleRowsByYear(moduleYearQuery);
             int[] expectedSearchResult = expectedSearchResults[i];
+            int[] actualSearchResult = test.findModuleRowsByYear(moduleYearQuery);
+            
 
             // System.out.println(actualSearchResult + " " + moduleCodeQuery + " " + expectedSearchResults[i]);
             for (int j=0; j<3; j++) {
-                Assert.assertEquals(expectedSearchResult[j], actualSearchResul[j]);  
+                Assert.assertEquals(expectedSearchResult[j], actualSearchResult[j]);  
+            }
+        }
+    }
+
+    @Test
+    public void testSearchByModuleLeaderName() throws FileNotFoundException, IOException {
+        String[] testQueries = {"Antony Galton", "Antony Galt", "Antony", "Ant"};
+        int[][] expectedSearchResults = {{19,21,25,28,31}, {19,21,25,28,31}, {19,21,25,28,31}, {19,21,25,28,31}};
+
+        ModuleApp test = new ModuleApp();
+        test.loadCSVFile("/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/modules.csv");
+
+        // Loop over test queries
+        for (int i=0; i<4; i++) {
+            String moduleLeaderNameQuery = testQueries[i];
+            int[] expectedSearchResult = expectedSearchResults[i];
+            int[] actualSearchResult = test.findModuleRowsByLeaderName(moduleLeaderNameQuery);
+            
+
+            // System.out.println(actualSearchResult + " " + moduleCodeQuery + " " + expectedSearchResults[i]);
+            for (int j=0; j<3; j++) {
+                Assert.assertEquals(expectedSearchResult[j], actualSearchResult[j]);  
             }
         }
     }

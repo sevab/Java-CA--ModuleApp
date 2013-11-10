@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="0" hostname="Sevas-MacBook-Air.local" name="module_database.ModuleAppTest" tests="2" time="0.114" timestamp="2013-11-08T13:24:23">
+<testsuite errors="0" failures="1" hostname="Sevas-MacBook-Air.local" name="module_database.ModuleAppTest" tests="4" time="0.18" timestamp="2013-11-10T16:22:52">
   <properties>
     <property name="default.javac.source" value="1.6" />
     <property name="file.encoding.pkg" value="sun.io" />
@@ -53,6 +53,7 @@
     <property name="javadoc.author" value="false" />
     <property name="libs.hibernate-support.javadoc" value="" />
     <property name="ap.proc.none.internal" value="" />
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16" />
     <property name="user.timezone" value="" />
     <property name="libs.spring-framework.maven-pom" value="" />
     <property name="libs.swing-layout.maven-pom" value="" />
@@ -70,10 +71,11 @@
     <property name="libs.JAXB-ENDORSED.src" value="" />
     <property name="libs.hibernate-persistence.javadoc" value="" />
     <property name="libs.ejb3-persistence.classpath" value="/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/ejb3-persistence.jar" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner module_database.ModuleAppTest filtertrace=true haltOnError=false haltOnFailure=false showoutput=true outputtoformatters=true logfailedtests=true logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/test/results/TEST-module_database.ModuleAppTest.xml crashfile=/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/junitvmwatcher6913040245369162371.properties propsfile=/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/junit4067284918517732775.properties" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner module_database.ModuleAppTest filtertrace=true haltOnError=false haltOnFailure=false showoutput=true outputtoformatters=true logfailedtests=true logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/test/results/TEST-module_database.ModuleAppTest.xml crashfile=/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/junitvmwatcher3781958169026686877.properties propsfile=/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/junit5404003401531210198.properties" />
     <property name="built-jar.properties" value="/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/built-jar.properties" />
     <property name="ant.file.Coursework_1" value="/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build.xml" />
     <property name="libs.junit.src" value="" />
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16" />
     <property name="ant.file" value="/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build.xml" />
     <property name="libs.junit_4.src" value="/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/docs/junit-4.10-sources.jar" />
     <property name="junit.available" value="true" />
@@ -106,6 +108,7 @@
     <property name="ap.cmd.line.internal" value="" />
     <property name="jdkBug6558476" value="false" />
     <property name="libs.spring-framework300.classpath" value="/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/ide/modules/org-apache-commons-logging.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/cglib-2.2.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-aop-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-asm-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-aspects-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-beans-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-context-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-context-support-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-core-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-expression-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-instrument-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-instrument-tomcat-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-jdbc-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-jms-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-orm-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-oxm-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-test-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-tx-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-web-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-webmvc-portlet-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-webmvc-3.1.1.RELEASE.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring-3.0/spring-struts-3.1.1.RELEASE.jar" />
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16" />
     <property name="libs.junit_4.javadoc" value="/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/docs/junit-4.10-javadoc.jar" />
     <property name="libs.spring-framework.src" value="" />
     <property name="libs.beans-binding.maven-pom" value="" />
@@ -140,42 +143,42 @@
     <property name="libs.PostgreSQLDriver.javadoc" value="" />
     <property name="libs.eclipselinkmodelgen.maven-pom" value="" />
     <property name="ant.java.version" value="1.6" />
+    <property name="java.class.version" value="50.0" />
     <property name="basedir" value="/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1" />
     <property name="javadoc.noindex" value="false" />
-    <property name="java.class.version" value="50.0" />
     <property name="javac.test.classpath" value=":build/classes:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/platform/modules/ext/junit-4.10.jar" />
     <property name="javac.processorpath" value="" />
     <property name="ant.home" value="/usr/share/ant" />
     <property name="libs.hibernate-persistence.src" value="" />
     <property name="javadoc.splitindex" value="true" />
-    <property name="javac.test.processorpath" value=":build/classes:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/platform/modules/ext/junit-4.10.jar" />
     <property name="libs.javac-api.javadoc" value="" />
+    <property name="javac.test.processorpath" value=":build/classes:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/platform/modules/ext/junit-4.10.jar" />
     <property name="javadoc.preview" value="true" />
     <property name="libs.MySQLDriver.maven-pom" value="" />
     <property name="copylibs.rebase" value="true" />
     <property name="libs.CopyLibs.javadoc" value="" />
     <property name="libs.PostgreSQLDriver.classpath" value="/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/ide/modules/ext/postgresql-9.2-1002.jdbc4.jar" />
     <property name="junit.forkmode" value="perTest" />
-    <property name="libs.jaxws21.maven-pom" value="" />
     <property name="libs.junit_4.classpath" value="/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/platform/modules/ext/junit-4.10.jar" />
     <property name="test.binarytestincludes" value="" />
+    <property name="libs.jaxws21.maven-pom" value="" />
     <property name="sun.boot.library.path" value="/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Libraries" />
     <property name="build.dir" value="build" />
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers" />
     <property name="libs.ejb3-persistence.javadoc" value="" />
-    <property name="java.awt.graphicsenv" value="apple.awt.CGraphicsEnvironment" />
     <property name="libs.testng.classpath" value="/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/platform/modules/ext/testng-6.5.1-dist.jar" />
+    <property name="java.awt.graphicsenv" value="apple.awt.CGraphicsEnvironment" />
     <property name="libs.jpa20-persistence.javadoc" value="" />
     <property name="javadoc.encoding.used" value="UTF-8" />
-    <property name="libs.testng.javadoc" value="/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/platform/docs/testng-6.5.1-javadoc.zip" />
     <property name="javadoc.windowtitle" value="" />
+    <property name="libs.testng.javadoc" value="/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/platform/docs/testng-6.5.1-javadoc.zip" />
     <property name="libs.hibernate-support.src" value="" />
     <property name="annotation.processing.enabled" value="true" />
-    <property name="run.jvmargs.ide" value="" />
     <property name="libs.JAXB-ENDORSED.maven-pom" value="" />
-    <property name="run.jvmargs" value="" />
+    <property name="run.jvmargs.ide" value="" />
     <property name="nb.junit.single" value="false" />
     <property name="build.generated.sources.dir" value="build/generated-sources" />
+    <property name="run.jvmargs" value="" />
     <property name="ant.project.name" value="Coursework_1" />
     <property name="libs.spring-framework.classpath" value="/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/ide/modules/org-apache-commons-logging.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/cglib-2.2.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/spring/spring-2.5.6.SEC03.jar" />
     <property name="libs.swing-layout.classpath" value="/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/platform/modules/ext/swing-layout-1.0.4.jar" />
@@ -193,14 +196,14 @@
     <property name="libs.absolutelayout.maven-pom" value="" />
     <property name="user.dir" value="/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1" />
     <property name="debug-transport" value="dt_socket" />
-    <property name="libs.ejb3-persistence.maven-pom" value="" />
     <property name="ant.file.type.Coursework_1" value="file" />
+    <property name="libs.ejb3-persistence.maven-pom" value="" />
     <property name="application.args" value="" />
     <property name="sun.cpu.endian" value="little" />
     <property name="compile.on.save" value="true" />
     <property name="libs.hibernate-support.classpath" value="/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/antlr-2.7.6.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/asm.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/asm-attrs.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/cglib-2.1.3.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/commons-collections-2.1.1.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/ide/modules/org-apache-commons-logging.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/dom4j-1.6.1.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/ehcache-1.2.3.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/jdbc2_0-stdext.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/jta.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/hibernate3.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/hibernate-tools.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/hibernate-annotations.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/hibernate-commons-annotations.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/hibernate-entitymanager.jar:/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/javassist.jar" />
-    <property name="libs.eclipselinkmodelgen.javadoc" value="" />
     <property name="endorsed.classpath.cmd.line.arg" value="-Xbootclasspath/p:&apos;/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/${endorsed.classpath}&apos;" />
+    <property name="libs.eclipselinkmodelgen.javadoc" value="" />
     <property name="jar.index" value="false" />
     <property name="libs.spring-framework300.javadoc" value="" />
     <property name="libs.MySQLDriver.src" value="" />
@@ -236,8 +239,8 @@
     <property name="libs.spring-framework300.maven-pom" value="" />
     <property name="libs.jaxws21.javadoc" value="/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/docs/jaxws-api-doc.zip" />
     <property name="default.javac.target" value="1.6" />
-    <property name="javac.classpath" value="" />
     <property name="javadoc.additionalparam" value="" />
+    <property name="javac.classpath" value="" />
     <property name="build.classes.dir" value="build/classes" />
     <property name="libs.swing-layout.javadoc" value="/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/platform/docs/swing-layout-1.0.4-doc.zip" />
     <property name="libs.swing-layout.src" value="/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/platform/docs/swing-layout-1.0.4-src.zip" />
@@ -248,11 +251,17 @@
     <property name="awt.nativeDoubleBuffering" value="true" />
     <property name="java.specification.version" value="1.6" />
     <property name="libs.JWSAntTasks.javadoc" value="" />
-    <property name="mkdist.disabled" value="true" />
     <property name="sun.arch.data.model" value="64" />
+    <property name="mkdist.disabled" value="true" />
   </properties>
   <testcase classname="module_database.ModuleAppTest" name="testColumnData" time="0.015" />
-  <testcase classname="module_database.ModuleAppTest" name="testSearchByModuleCode" time="0.011" />
+  <testcase classname="module_database.ModuleAppTest" name="testSearchByModuleCode" time="0.012" />
+  <testcase classname="module_database.ModuleAppTest" name="testSearchByModuleYear" time="0.026" />
+  <testcase classname="module_database.ModuleAppTest" name="testSearchByModuleLeaderName" time="0.023">
+    <failure message="expected:&lt;19&gt; but was:&lt;-1&gt;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: expected:&lt;19&gt; but was:&lt;-1&gt;
+	at module_database.ModuleAppTest.testSearchByModuleLeaderName(ModuleAppTest.java:119)
+</failure>
+  </testcase>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
