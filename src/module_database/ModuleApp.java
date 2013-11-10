@@ -29,6 +29,7 @@ public class ModuleApp {
     	this.csvRegex = Pattern.compile("\"(.*?)\"");
 		this.moduleYearRegex = Pattern.compile("(?<=^...)(1|2|3|M|m)");
     }
+
     
     // Accessor methods
     public String[][] getDatabase() { return database; }
@@ -78,9 +79,9 @@ public class ModuleApp {
     		if (candidateResult.equals(moduleYearQuery))
     			resultRows = resultRows + i + ",";
     	}
-		// System.out.println(resultRows);
     	return convertStringToIntArray(resultRows);
     }
+
 
     int[] findModuleRowsByLeaderName(String moduleLeaderNameQuery) {
     	String resultRows = ""; // if nothing's found, assign an empty array.
@@ -92,12 +93,22 @@ public class ModuleApp {
     		if (moduleLeaderNameMatcher.lookingAt())
     			resultRows = resultRows + i + ",";
     	}
-		// System.out.println(resultRows);
 
     	return convertStringToIntArray(resultRows);
     }
 
+    int[] findModuleRowsByLeaderEmail(String moduleLeaderEmailQuery) {
+    	String resultRows = ""; // if nothing's found, assign an empty array.
+    	Pattern moduleLeaderEmailRegex = Pattern.compile(moduleLeaderEmailQuery);
 
+    	for (int i=0; i < this.elementsInDatabase ; i++) {
+    		Matcher moduleLeaderEmailMatcher = moduleLeaderEmailRegex.matcher(database[i][3]);
+
+    		if (moduleLeaderEmailMatcher.lookingAt())
+    			resultRows = resultRows + i + ",";
+    	}
+    	return convertStringToIntArray(resultRows);
+    }
 
 
 

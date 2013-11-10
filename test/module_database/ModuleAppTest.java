@@ -120,4 +120,28 @@ public class ModuleAppTest {
             }
         }
     }
+
+    @Test
+    public void testSearchByModuleLeaderEmail() throws FileNotFoundException, IOException {
+        String[] testQueries = {"A.P.Galton@ex.ac.uk", "A.P.Galton@ex.ac.", "A.P.Ga", "A.P"};
+        int[][] expectedSearchResults = {{19,21,25,28,31}, {19,21,25,28,31}, {19,21,25,28,31}, {19,21,25,28,31}};
+
+        ModuleApp test = new ModuleApp();
+        test.loadCSVFile("/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/modules.csv");
+
+        // Loop over test queries
+        for (int i=0; i<4; i++) {
+            String moduleLeaderEmailQuery = testQueries[i];
+            int[] expectedSearchResult = expectedSearchResults[i];
+            int[] actualSearchResult = test.findModuleRowsByLeaderEmail(moduleLeaderEmailQuery);
+            
+
+            // System.out.println(actualSearchResult + " " + moduleCodeQuery + " " + expectedSearchResults[i]);
+            for (int j=0; j<5; j++) {
+                Assert.assertEquals(expectedSearchResult[j], actualSearchResult[j]);  
+            }
+        }
+    }
+
+    
 }
