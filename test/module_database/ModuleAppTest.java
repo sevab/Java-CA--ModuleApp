@@ -33,7 +33,7 @@ public class ModuleAppTest {
 //    @Ignore @Test
 //    public void testFirstLine() throws FileNotFoundException, IOException {
 //        String expected = "\"ECM1401\",\"Programming\",\"Jonathan Fieldsend\",\"J.E.Fieldsend@exeter.ac.uk\"";
-//        String actual = ModuleApp.loadCSVFile("/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/modules.csv");
+//        String actual = ModuleApp.loadCSVFile("test/module_database/test_modules.csv");
 //        Assert.assertEquals(expected, actual);
 //    }
     
@@ -45,7 +45,7 @@ public class ModuleAppTest {
         String[] expectedModuleLeadersEmails = {"J.E.Fieldsend@exeter.ac.uk", "Z.M.Wood@exeter.ac.uk", "Z.M.Wood@exeter.ac.uk"};
 
         ModuleApp test = new ModuleApp();
-        test.loadCSVFile("/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/modules.csv");
+        test.loadCSVFile("test/module_database/test_modules.csv");
         for (int i = 0; i < 3 ; i++) {
             Assert.assertEquals(expectedModuleCodes[i], test.getDatabase()[i][0]);
         }
@@ -66,7 +66,7 @@ public class ModuleAppTest {
         int[] expectedSearchResults = { 0, 2, 3, 27, 59, -1};
 
         ModuleApp test = new ModuleApp();
-        test.loadCSVFile("/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/modules.csv");
+        test.loadCSVFile("test/module_database/test_modules.csv");
 
         int i = 0;
         for (String moduleCodeQuery : testQueries) {
@@ -83,7 +83,7 @@ public class ModuleAppTest {
         int[][] expectedSearchResults = { {0,1,2}, {10,11,12}, {21,22,23}, {33,34,35}};
 
         ModuleApp test = new ModuleApp();
-        test.loadCSVFile("/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/modules.csv");
+        test.loadCSVFile("test/module_database/test_modules.csv");
 
         // Loop over test queries
         for (int i=0; i<4; i++) {
@@ -105,7 +105,7 @@ public class ModuleAppTest {
         int[][] expectedSearchResults = {{19,21,25,28,31}, {19,21,25,28,31}, {19,21,25,28,31}, {19,21,25,28,31}};
 
         ModuleApp test = new ModuleApp();
-        test.loadCSVFile("/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/modules.csv");
+        test.loadCSVFile("test/module_database/test_modules.csv");
 
         // Loop over test queries
         for (int i=0; i<4; i++) {
@@ -127,7 +127,7 @@ public class ModuleAppTest {
         int[][] expectedSearchResults = {{19,21,25,28,31}, {19,21,25,28,31}, {19,21,25,28,31}, {19,21,25,28,31}};
 
         ModuleApp test = new ModuleApp();
-        test.loadCSVFile("/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/modules.csv");
+        test.loadCSVFile("test/module_database/test_modules.csv");
 
         // Loop over test queries
         for (int i=0; i<4; i++) {
@@ -146,25 +146,50 @@ public class ModuleAppTest {
     @Test
     public void testGettingFullModuleInfoAsString() throws FileNotFoundException, IOException {
         ModuleApp test = new ModuleApp();
-        test.loadCSVFile("/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/modules.csv");
-        String expected = "ECM1401 Programming Jonathan Fieldsend J.E.Fieldsend@exeter.ac.uk";
-        String actual = test.getModuleInfo(0);
+        test.loadCSVFile("test/module_database/test_modules.csv");
+        String[] expected = {"ECM1401", "Programming", "Jonathan Fieldsend", "J.E.Fieldsend@exeter.ac.uk"};
+        String[] actual = test.getModuleInfo(0);
+        Assert.assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetCsvLine() throws FileNotFoundException, IOException {
+        ModuleApp test = new ModuleApp();
+        String expected = "\"ECM1402\",\"Computer Systems\",\"Zena Wood\",\"Z.M.Wood@exeter.ac.uk\"";
+        String actual = test.getCsvLine("test/module_database/test_modules.csv", 1);
         Assert.assertEquals(expected, actual);
     }
 
-    // Next: Verify Duplicates
+    // Next: Validate, Verify Duplicates
     @Test
     public void testModuleUpdate() throws FileNotFoundException, IOException {
+
         ModuleApp test = new ModuleApp();
-        test.loadCSVFile("/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/modules.csv");
+        test.loadCSVFile("test/module_database/test_modules.csv");
+
+        // Before Update:
+        String expectedLine = "\"ECM1402\",\"Computer Systems\",\"Zena Wood\",\"Z.M.Wood@exeter.ac.uk\"";
+        String actualLine = test.getCsvLine("test/module_database/test_modules.csv", 1);
+        Assert.assertEquals(expectedLine, actualLine);
+        String[] expectedArray = {"ECM1402","Computer Systems","Zena Wood","Z.M.Wood@exeter.ac.uk"};
+        String[] actualArray = test.getModuleInfo(1);
+        Assert.assertArrayEquals(expectedArray, actualArray);
+
         test.updateModule(1, "ECM9999", "Test Name", "Test Name", "test@email.co.uk");
-        String expected = "ECM9999 Test Name Test Name test@email.co.uk";
-        String actual = test.getModuleInfo(1);
-        Assert.assertEquals(expected, actual);
+        
+        // After Update:
+        String[] expectedArrayTwo = {"ECM9999", "Test Name", "Test Name", "test@email.co.uk"};
+        String[] actualArrayTwo = test.getModuleInfo(1);
+        Assert.assertArrayEquals(expectedArrayTwo, actualArrayTwo);
+        expectedLine = "\"ECM9999\",\"Test Name\",\"Test Name\",\"test@email.co.uk\"";
+        actualLine = test.getCsvLine("test/module_database/test_modules.csv", 1);
+        Assert.assertEquals(expectedLine, actualLine);
+        // Restore database file back to the original, pre-test state
+        ModuleApp.restoreDatabaseFileFromBackUp("test/module_database/backup_modules.csv", "test/module_database/test_modules.csv");
     }
 
 
-
+    
 
     // @Test
     // public void testSearchByModuleLeaderEmailCornerCases() throws FileNotFoundException, IOException {
