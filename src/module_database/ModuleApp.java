@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  */
 class ModuleApp {
     // make private?:
-    String[][] database;
+    // String[][] database;
     // TODO: get rid of elementsInDatabase
     int elementsInDatabase;    
     Pattern csvRegex;
@@ -47,7 +47,6 @@ class ModuleApp {
 
     
     // Accessor methods
-    String[][] getDatabase() { return this.database; }
     Module[] getDb() { return this.db; }
     
 
@@ -55,27 +54,14 @@ class ModuleApp {
     // TODO: Expand database if reached the limit (keep on adding until an exception is thrown?)
     void loadCSVFile(String databaseFileDirectory) throws FileNotFoundException, IOException {
         
-        // #DELETME
-        this.database = new String[linesInAFile(databaseFileDirectory)][4];
-
+        
         this.db = new Module[linesInAFile(databaseFileDirectory)];
         this.databaseFile = new File(databaseFileDirectory);
         BufferedReader reader = new BufferedReader(new FileReader(databaseFile));
         String line;
 		while ((line = reader.readLine()) != null) {
-
-            // #DELETME start
-			Matcher csvMatcher = csvRegex.matcher(line);
-			for (int j=0; j<4;j++) {
-				csvMatcher.find();
-                // #DELETME
-			   	this.database[elementsInDatabase][j] = csvMatcher.group(1);
-			   	// System.out.println(database[elementsInDatabase][j]);
-			}
-            // #DELETME end; add Matcher type to csv Matcher below
-
-            // #OPTIMIZE
-            csvMatcher = csvRegex.matcher(line);
+			// #OPTIMIZE
+            Matcher csvMatcher = csvRegex.matcher(line);
             csvMatcher.find();
             String newCode = csvMatcher.group(1);
             csvMatcher.find();
@@ -146,9 +132,7 @@ class ModuleApp {
 
 
 
-    String[] getModuleInfo(int moduleRow) {
-    	return new String[]{database[moduleRow][0], database[moduleRow][1], database[moduleRow][2], database[moduleRow][3]};
-    }
+
     Module getModule(int moduleRow) { return this.db[moduleRow]; }
 
     String getCsvLine(String fileDirectory, int lineNumber) throws FileNotFoundException, IOException {
@@ -186,12 +170,6 @@ class ModuleApp {
 
         // update the database array
         // FIXME: shall we perform this after updating CSV file in case of errors? But errors should be caught.
-        // DELETEME
-        this.database[moduleRow][0] = newModuleCode;
-        this.database[moduleRow][1] = newModuleTitle;
-        this.database[moduleRow][2] = newModuleLeaderName;
-        this.database[moduleRow][3] = newModuleLeaderEmail;
-
         // Extract into Validator.isNotEmpty(String str)
         if (!newModuleCode.equals(""))
             getModule(moduleRow).setCode(newModuleCode);
@@ -255,16 +233,9 @@ class ModuleApp {
         int j = 0;
         for (int i=0; i<newDatabase.length; i++) {
             if (i == moduleRow) j++;
-            // DELETME
-            newDatabase[i][0] = this.database[j][0];
-            newDatabase[i][1] = this.database[j][1];
-            newDatabase[i][2] = this.database[j][2];
-            newDatabase[i][3] = this.database[j][3];
-
             newDB[i] = this.db[j]; 
             j++;
         }
-        this.database = newDatabase;
         this.db = newDB;
 
        // delete from CSV
@@ -316,28 +287,14 @@ class ModuleApp {
 
         // add to databaseArray:
         // DELETEME
-        String[][] newDatabase = new String[this.database.length+1][4];
-        Module[] newDB = new Module[this.database.length+1];
+        Module[] newDB = new Module[this.db.length+1];
         // Copy old database into the new
         for (int i=0; i<this.db.length; i++) {
-            newDatabase[i][0] = this.database[i][0];
-            newDatabase[i][1] = this.database[i][1];
-            newDatabase[i][2] = this.database[i][2];
-            newDatabase[i][3] = this.database[i][3];
-
             newDB[i] = this.db[i];
         }
         // Add new module to the new database
-        // DELETEME
-        newDatabase[newDatabase.length-1][0] = newModuleCode;
-        newDatabase[newDatabase.length-1][1] = newModuleTitle;
-        newDatabase[newDatabase.length-1][2] = newModuleLeaderName;
-        newDatabase[newDatabase.length-1][3] = newModuleLeaderEmail;
-
-        newDB[newDatabase.length-1] = new Module(newModuleCode, newModuleTitle, newModuleLeaderName, newModuleLeaderEmail);
+        newDB[newDB.length-1] = new Module(newModuleCode, newModuleTitle, newModuleLeaderName, newModuleLeaderEmail);
         // reasign new database to the global database
-        // DELETEME
-        this.database = newDatabase;
         this.db = newDB;
 
         // append line to the databaseCSVfile

@@ -139,15 +139,6 @@ public class ModuleAppTest {
             }
         }
     }
-    
-    @Test
-    public void testGettingFullModuleInfoAsString() throws FileNotFoundException, IOException {
-        ModuleApp test = new ModuleApp();
-        test.loadCSVFile(this.test_csv_file);
-        String[] expected = {"ECM1401", "Programming", "Jonathan Fieldsend", "J.E.Fieldsend@exeter.ac.uk"};
-        String[] actual = test.getModuleInfo(0);
-        Assert.assertArrayEquals(expected, actual);
-    }
 
     @Test
     public void testGetCsvLine() throws FileNotFoundException, IOException {

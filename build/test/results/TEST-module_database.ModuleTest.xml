@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="0" hostname="Sevas-MacBook-Air.local" name="module_database.ModuleTest" tests="3" time="0.103" timestamp="2013-11-12T23:38:09">
+<testsuite errors="0" failures="0" hostname="Sevas-MacBook-Air.local" name="module_database.ModuleTest" tests="3" time="0.064" timestamp="2013-11-12T23:51:30">
   <properties>
     <property name="default.javac.source" value="1.6" />
     <property name="file.encoding.pkg" value="sun.io" />
@@ -71,7 +71,7 @@
     <property name="libs.JAXB-ENDORSED.src" value="" />
     <property name="libs.hibernate-persistence.javadoc" value="" />
     <property name="libs.ejb3-persistence.classpath" value="/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/ejb3-persistence.jar" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner module_database.ModuleTest filtertrace=true haltOnError=false haltOnFailure=false showoutput=true outputtoformatters=true logfailedtests=true logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/test/results/TEST-module_database.ModuleTest.xml crashfile=/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/junitvmwatcher130085358272265679.properties propsfile=/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/junit6254748047954600688.properties" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner module_database.ModuleTest filtertrace=true haltOnError=false haltOnFailure=false showoutput=true outputtoformatters=true logfailedtests=true logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/test/results/TEST-module_database.ModuleTest.xml crashfile=/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/junitvmwatcher973452132812578717.properties propsfile=/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/junit7943994653507067354.properties" />
     <property name="built-jar.properties" value="/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/built-jar.properties" />
     <property name="ant.file.Coursework_1" value="/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build.xml" />
     <property name="libs.junit.src" value="" />
@@ -254,9 +254,9 @@
     <property name="sun.arch.data.model" value="64" />
     <property name="mkdist.disabled" value="true" />
   </properties>
-  <testcase classname="module_database.ModuleTest" name="testReadingModuleInfo" time="0.0020" />
+  <testcase classname="module_database.ModuleTest" name="testReadingModuleInfo" time="0.0010" />
   <testcase classname="module_database.ModuleTest" name="testUpdatingModuleInfo" time="0.0" />
-  <testcase classname="module_database.ModuleTest" name="testGettingFullModuleInfo" time="0.0020" />
+  <testcase classname="module_database.ModuleTest" name="testGettingFullModuleInfo" time="0.0010" />
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
