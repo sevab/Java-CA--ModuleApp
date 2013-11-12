@@ -3,6 +3,7 @@
 *         b) combine ModuleApp() with loadCSVFile()
 *
 *   TODO: when doing threading, warn user if he tries to quit the app while a tread hasn't finished writing to a file
+*   TODO: decide on uniform variable names (e.g. newModuleTitle vs newTitle)
 */
 
 package module_database;
@@ -25,11 +26,15 @@ import java.util.regex.Pattern;
  * @author sevabaskin
  */
 class ModuleApp {
+    // make private?:
     String[][] database;
+    // TODO: get rid of elementsInDatabase
     int elementsInDatabase;    
     Pattern csvRegex;
 	Pattern moduleYearRegex;
     File databaseFile;
+    // Substitute db & Db for db?
+    private Module[] db;
 
     ModuleApp() {
         // FIXME: Do we need this variable considering that databaseArray has preceise length
@@ -42,23 +47,45 @@ class ModuleApp {
 
     
     // Accessor methods
-    String[][] getDatabase() { return database; }
+    String[][] getDatabase() { return this.database; }
+    Module[] getDb() { return this.db; }
     
 
     // TODO: normalize all queries by upcasing; normalize results as well?
     // TODO: Expand database if reached the limit (keep on adding until an exception is thrown?)
     void loadCSVFile(String databaseFileDirectory) throws FileNotFoundException, IOException {
+        
+        // #DELETME
         this.database = new String[linesInAFile(databaseFileDirectory)][4];
+
+        this.db = new Module[linesInAFile(databaseFileDirectory)];
         this.databaseFile = new File(databaseFileDirectory);
         BufferedReader reader = new BufferedReader(new FileReader(databaseFile));
         String line;
 		while ((line = reader.readLine()) != null) {
+
+            // #DELETME start
 			Matcher csvMatcher = csvRegex.matcher(line);
 			for (int j=0; j<4;j++) {
 				csvMatcher.find();
+                // #DELETME
 			   	this.database[elementsInDatabase][j] = csvMatcher.group(1);
 			   	// System.out.println(database[elementsInDatabase][j]);
 			}
+            // #DELETME end; add Matcher type to csv Matcher below
+
+            // #OPTIMIZE
+            csvMatcher = csvRegex.matcher(line);
+            csvMatcher.find();
+            String newCode = csvMatcher.group(1);
+            csvMatcher.find();
+            String newTitle = csvMatcher.group(1);
+            csvMatcher.find();
+            String newLeaderName = csvMatcher.group(1);
+            csvMatcher.find();
+            String newLeaderEmail = csvMatcher.group(1);
+            this.db[elementsInDatabase] = new Module(newCode, newTitle, newLeaderName, newLeaderEmail);
+
 			elementsInDatabase++;
 		}
     }
@@ -66,8 +93,8 @@ class ModuleApp {
 
     int findModuleRowByCode(String moduleCodeQuery) {
     	int resultRow = -1;
-    	for (int i=0; i < this.elementsInDatabase ; i++) {
-    		if (this.database[i][0].equals(moduleCodeQuery)) {
+    	for (int i=0; i < this.db.length ; i++) {
+    		if (getModule(i).getCode().equals(moduleCodeQuery)) {
     			resultRow = i;
     			break;
     		}
@@ -80,9 +107,9 @@ class ModuleApp {
     int[] findModuleRowsByYear(String moduleYearQuery) {
     	// if (moduleYearQuery.length() == 0) return new int[]{-1};
 
-    	String resultRows = ""; // if nothing's found, assign an empty array.	
-    	for (int i=0; i < this.elementsInDatabase ; i++) {
-    		Matcher moduleYearMatcher = moduleYearRegex.matcher(database[i][0]);
+    	String resultRows = ""; // if nothing's found, assign an empty array.
+    	for (int i=0; i < this.db.length ; i++) {
+    		Matcher moduleYearMatcher = moduleYearRegex.matcher(getModule(i).getCode());
     		moduleYearMatcher.find();
 		   	String candidateResult = moduleYearMatcher.group();
     		if (candidateResult.equals(moduleYearQuery))
@@ -96,8 +123,8 @@ class ModuleApp {
 
     	String resultRows = ""; // if nothing's found, assign an empty array.
     	Pattern moduleLeaderNameRegex = Pattern.compile(moduleLeaderNameQuery);
-    	for (int i=0; i < this.elementsInDatabase ; i++) {
-    		Matcher moduleLeaderNameMatcher = moduleLeaderNameRegex.matcher(database[i][2]);
+    	for (int i=0; i < this.db.length ; i++) {
+    		Matcher moduleLeaderNameMatcher = moduleLeaderNameRegex.matcher(getModule(i).getLeaderName());
     		if (moduleLeaderNameMatcher.lookingAt())
     			resultRows = resultRows + i + ",";
     	}
@@ -109,8 +136,8 @@ class ModuleApp {
 
     	String resultRows = ""; // if nothing's found, assign an empty array.
     	Pattern moduleLeaderEmailRegex = Pattern.compile(moduleLeaderEmailQuery);
-    	for (int i=0; i < this.elementsInDatabase ; i++) {
-    		Matcher moduleLeaderEmailMatcher = moduleLeaderEmailRegex.matcher(database[i][3]);
+    	for (int i=0; i < this.db.length ; i++) {
+    		Matcher moduleLeaderEmailMatcher = moduleLeaderEmailRegex.matcher(getModule(i).getLeaderEmail());
     		if (moduleLeaderEmailMatcher.lookingAt())
     			resultRows = resultRows + i + ",";
     	}
@@ -118,13 +145,12 @@ class ModuleApp {
     }
 
 
-    // DON'T FORGET TO CLOSE FILE
-
-
 
     String[] getModuleInfo(int moduleRow) {
     	return new String[]{database[moduleRow][0], database[moduleRow][1], database[moduleRow][2], database[moduleRow][3]};
     }
+    Module getModule(int moduleRow) { return this.db[moduleRow]; }
+
     String getCsvLine(String fileDirectory, int lineNumber) throws FileNotFoundException, IOException {
         // FIXME: make sure line's not empty
         BufferedReader reader = new BufferedReader(new FileReader(fileDirectory));
@@ -148,7 +174,7 @@ class ModuleApp {
     //     String = "\""+database[moduleRow][0]+"\",\""+database[moduleRow][1]+"\",\""+database[moduleRow][2]+"\",\""+database[moduleRow][3]+"\"";
     // }
 
-    void updateModule(int moduleRow, String newModuleCode, String newModuleTitle, String newModuleLeader, String newModuleLeaderEmail) {
+    void updateModule(int moduleRow, String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) {
         // TODO: Validate first (format + if empty)
         // TODO: update, reload database
         // TODO: extract into to private methods updateDatabaseArray & updateDatabaseCSV, then call both in here after validating values
@@ -160,10 +186,21 @@ class ModuleApp {
 
         // update the database array
         // FIXME: shall we perform this after updating CSV file in case of errors? But errors should be caught.
+        // DELETEME
         this.database[moduleRow][0] = newModuleCode;
         this.database[moduleRow][1] = newModuleTitle;
-        this.database[moduleRow][2] = newModuleLeader;
+        this.database[moduleRow][2] = newModuleLeaderName;
         this.database[moduleRow][3] = newModuleLeaderEmail;
+
+        // Extract into Validator.isNotEmpty(String str)
+        if (!newModuleCode.equals(""))
+            getModule(moduleRow).setCode(newModuleCode);
+        if (!newModuleTitle.equals(""))
+            getModule(moduleRow).setTitle(newModuleTitle);
+        if (!newModuleLeaderName.equals(""))
+            getModule(moduleRow).setLeaderName(newModuleLeaderName);
+        if (!newModuleLeaderEmail.equals(""))
+            getModule(moduleRow).setLeaderEmail(newModuleLeaderEmail);
 
         // update the CSV file
         // TODO: Move to thread
@@ -178,7 +215,7 @@ class ModuleApp {
             while ((line = br.readLine()) != null) {
                 if (i == moduleRow) { // TODO: Extract into a separate method:
                     // System.out.println("before: " + line);
-                    line = "\""+newModuleCode+"\",\""+ newModuleTitle +"\",\""+ newModuleLeader +"\",\""+newModuleLeaderEmail+"\"";
+                    line = "\""+newModuleCode+"\",\""+ newModuleTitle +"\",\""+ newModuleLeaderName +"\",\""+newModuleLeaderEmail+"\"";
                     // System.out.println("after: " + line);
                 }
                 bw.write(line+"\n");
@@ -209,46 +246,26 @@ class ModuleApp {
         }
     }
 
-    // To be used by the test suite to restore the database back to its original state after modification
-    static void restoreDatabaseFileFromBackUp(String backupFilePath, String destinationFilePath) throws IOException {
-        File backupFile = new File(backupFilePath);
-        File destinationFile = new File(destinationFilePath);
-        // TODO: might want to do something else
-        if(!destinationFile.exists()) {
-            destinationFile.createNewFile();
-        }
-        FileChannel source = null;
-        FileChannel destination = null;
-        try {
-            source = new FileInputStream(backupFile).getChannel();
-            destination = new FileOutputStream(destinationFile).getChannel();
-            destination.transferFrom(source, 0, source.size());
-        }
-        finally {
-            if(source != null) {
-                source.close();
-            }
-            if(destination != null) {
-                destination.close();
-            }
-        }
-    }
 
     void deleteModule(int moduleRow) {
-
-
         // delete from the database Array first
-        String[][] newDatabase = new String[this.database.length-1][4];
+        // DELETME
+        String[][] newDatabase = new String[this.db.length-1][4];
+        Module[] newDB = new Module[this.db.length-1];
         int j = 0;
         for (int i=0; i<newDatabase.length; i++) {
             if (i == moduleRow) j++;
+            // DELETME
             newDatabase[i][0] = this.database[j][0];
             newDatabase[i][1] = this.database[j][1];
             newDatabase[i][2] = this.database[j][2];
             newDatabase[i][3] = this.database[j][3];
+
+            newDB[i] = this.db[j]; 
             j++;
         }
         this.database = newDatabase;
+        this.db = newDB;
 
        // delete from CSV
         String databaseFileName = this.databaseFile.getName();
@@ -293,7 +310,52 @@ class ModuleApp {
     }
 
 
+
+    void createModule(String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) {
+        // TODO: Validate (format + nonEmptyness) & Check for duplicates
+
+        // add to databaseArray:
+        // DELETEME
+        String[][] newDatabase = new String[this.database.length+1][4];
+        Module[] newDB = new Module[this.database.length+1];
+        // Copy old database into the new
+        for (int i=0; i<this.db.length; i++) {
+            newDatabase[i][0] = this.database[i][0];
+            newDatabase[i][1] = this.database[i][1];
+            newDatabase[i][2] = this.database[i][2];
+            newDatabase[i][3] = this.database[i][3];
+
+            newDB[i] = this.db[i];
+        }
+        // Add new module to the new database
+        // DELETEME
+        newDatabase[newDatabase.length-1][0] = newModuleCode;
+        newDatabase[newDatabase.length-1][1] = newModuleTitle;
+        newDatabase[newDatabase.length-1][2] = newModuleLeaderName;
+        newDatabase[newDatabase.length-1][3] = newModuleLeaderEmail;
+
+        newDB[newDatabase.length-1] = new Module(newModuleCode, newModuleTitle, newModuleLeaderName, newModuleLeaderEmail);
+        // reasign new database to the global database
+        // DELETEME
+        this.database = newDatabase;
+        this.db = newDB;
+
+        // append line to the databaseCSVfile
+        // OPTIMIZE: extraction opportunity into appendLine(File file, String line) method
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(this.databaseFile, true));
+            String line = "\""+newModuleCode+"\",\""+ newModuleTitle +"\",\""+newModuleLeaderName+"\",\""+newModuleLeaderEmail+"\"";
+            bw.write(line+"\n");
+            bw.close();
+        } catch (IOException e) {}
+
+    }
+
+
+
     // Helpers
+    // private boolean notDuplicate(String moduleCode) {}
+
     private int[] convertStringToIntArray(String str) {
 		String[] strArray = str.split(",");
 		int[] intArray = new int[strArray.length];
@@ -309,7 +371,30 @@ class ModuleApp {
         return lines;
     }
 
-
+    // To be used by the test suite to restore the database back to its original state after modification
+    static void restoreDatabaseFileFromBackUp(String backupFilePath, String destinationFilePath) throws IOException {
+        File backupFile = new File(backupFilePath);
+        File destinationFile = new File(destinationFilePath);
+        // TODO: might want to do something else
+        if(!destinationFile.exists()) {
+            destinationFile.createNewFile();
+        }
+        FileChannel source = null;
+        FileChannel destination = null;
+        try {
+            source = new FileInputStream(backupFile).getChannel();
+            destination = new FileOutputStream(destinationFile).getChannel();
+            destination.transferFrom(source, 0, source.size());
+        }
+        finally {
+            if(source != null) {
+                source.close();
+            }
+            if(destination != null) {
+                destination.close();
+            }
+        }
+    }
     
 
 }
