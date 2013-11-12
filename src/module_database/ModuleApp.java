@@ -28,18 +28,12 @@ import java.util.regex.Pattern;
 class ModuleApp {
     // make private?:
     // String[][] database;
-    // TODO: get rid of elementsInDatabase
-    int elementsInDatabase;    
     Pattern csvRegex;
 	Pattern moduleYearRegex;
     File databaseFile;
-    // Substitute db & Db for db?
     private Module[] db;
 
     ModuleApp() {
-        // FIXME: Do we need this variable considering that databaseArray has preceise length
-    	this.elementsInDatabase = 0;
-
     	// Move to the specific methods if not used in multiple places:
     	this.csvRegex = Pattern.compile("\"(.*?)\"");
 		this.moduleYearRegex = Pattern.compile("(?<=^...)(1|2|3|M|m)");
@@ -59,6 +53,7 @@ class ModuleApp {
         this.databaseFile = new File(databaseFileDirectory);
         BufferedReader reader = new BufferedReader(new FileReader(databaseFile));
         String line;
+        int i = 0;
 		while ((line = reader.readLine()) != null) {
 			// #OPTIMIZE
             Matcher csvMatcher = csvRegex.matcher(line);
@@ -70,9 +65,8 @@ class ModuleApp {
             String newLeaderName = csvMatcher.group(1);
             csvMatcher.find();
             String newLeaderEmail = csvMatcher.group(1);
-            this.db[elementsInDatabase] = new Module(newCode, newTitle, newLeaderName, newLeaderEmail);
-
-			elementsInDatabase++;
+            this.db[i] = new Module(newCode, newTitle, newLeaderName, newLeaderEmail);
+			i++;
 		}
     }
 
