@@ -188,8 +188,34 @@ public class ModuleAppTest {
         ModuleApp.restoreDatabaseFileFromBackUp("test/module_database/backup_modules.csv", "test/module_database/test_modules.csv");
     }
 
+    @Test
+    public void testModuleDelete() throws FileNotFoundException, IOException {
+        ModuleApp test = new ModuleApp();
+        test.loadCSVFile("test/module_database/test_modules.csv");
 
-    
+        // Before Update:
+        String expectedLine = "\"ECM1402\",\"Computer Systems\",\"Zena Wood\",\"Z.M.Wood@exeter.ac.uk\"";
+        String actualLine = test.getCsvLine("test/module_database/test_modules.csv", 1);
+        Assert.assertEquals(expectedLine, actualLine);
+        String[] expectedArray = {"ECM1402","Computer Systems","Zena Wood","Z.M.Wood@exeter.ac.uk"};
+        String[] actualArray = test.getModuleInfo(1);
+        Assert.assertArrayEquals(expectedArray, actualArray);
+
+        test.deleteModule(1);
+
+        // After Update:
+        expectedLine = "\"ECM1406\",\"Data Structures and Team Project\",\"Zena Wood\",\"Z.M.Wood@exeter.ac.uk\"";
+        actualLine = test.getCsvLine("test/module_database/test_modules.csv", 1);
+        Assert.assertEquals(expectedLine, actualLine);
+        String[] expectedArrayTwo = {"ECM1406","Data Structures and Team Project","Zena Wood","Z.M.Wood@exeter.ac.uk"};
+        String[] actualArrayTwo = test.getModuleInfo(1);
+        Assert.assertArrayEquals(expectedArrayTwo, actualArrayTwo);
+        
+
+        // Restore database file back to the original, pre-test state
+        ModuleApp.restoreDatabaseFileFromBackUp("test/module_database/backup_modules.csv", "test/module_database/test_modules.csv");
+
+    }
 
     // @Test
     // public void testSearchByModuleLeaderEmailCornerCases() throws FileNotFoundException, IOException {

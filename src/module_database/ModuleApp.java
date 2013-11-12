@@ -1,6 +1,8 @@
 /** TODO: currently the use of other methods requires calling loadCSV file; so, either
 *         a) throw an error message if loadCSVFile() isn't called first or 
 *         b) combine ModuleApp() with loadCSVFile()
+*
+*   TODO: when doing threading, warn user if he tries to quit the app while a tread hasn't finished writing to a file
 */
 
 package module_database;
@@ -30,7 +32,7 @@ class ModuleApp {
     File databaseFile;
 
     ModuleApp() {
-    	this.database = new String[100][4];
+        // FIXME: Do we need this variable considering that databaseArray has preceise length
     	this.elementsInDatabase = 0;
 
     	// Move to the specific methods if not used in multiple places:
@@ -46,6 +48,7 @@ class ModuleApp {
     // TODO: normalize all queries by upcasing; normalize results as well?
     // TODO: Expand database if reached the limit (keep on adding until an exception is thrown?)
     void loadCSVFile(String databaseFileDirectory) throws FileNotFoundException, IOException {
+        this.database = new String[linesInAFile(databaseFileDirectory)][4];
         this.databaseFile = new File(databaseFileDirectory);
         BufferedReader reader = new BufferedReader(new FileReader(databaseFile));
         String line;
@@ -53,7 +56,7 @@ class ModuleApp {
 			Matcher csvMatcher = csvRegex.matcher(line);
 			for (int j=0; j<4;j++) {
 				csvMatcher.find();
-			   	database[elementsInDatabase][j] = csvMatcher.group(1);
+			   	this.database[elementsInDatabase][j] = csvMatcher.group(1);
 			   	// System.out.println(database[elementsInDatabase][j]);
 			}
 			elementsInDatabase++;
@@ -157,12 +160,13 @@ class ModuleApp {
 
         // update the database array
         // FIXME: shall we perform this after updating CSV file in case of errors? But errors should be caught.
-        database[moduleRow][0] = newModuleCode;
-        database[moduleRow][1] = newModuleTitle;
-        database[moduleRow][2] = newModuleLeader;
-        database[moduleRow][3] = newModuleLeaderEmail;
+        this.database[moduleRow][0] = newModuleCode;
+        this.database[moduleRow][1] = newModuleTitle;
+        this.database[moduleRow][2] = newModuleLeader;
+        this.database[moduleRow][3] = newModuleLeaderEmail;
 
         // update the CSV file
+        // TODO: Move to thread
         BufferedReader br = null;
         BufferedWriter bw = null;
         try {
@@ -194,8 +198,7 @@ class ModuleApp {
             } catch (IOException e) {}
         }
 
-
-        // TODO: delete() returns true, so continue only if deleted successfuly
+        // TODO: Extract into a different function. Used in deleteModule() && updateModule()
         // Delete old database file
         if (this.databaseFile.delete()) {
             // Reasign with the new database file saved as a tempFile
@@ -207,7 +210,7 @@ class ModuleApp {
     }
 
     // To be used by the test suite to restore the database back to its original state after modification
-    public static void restoreDatabaseFileFromBackUp(String backupFilePath, String destinationFilePath) throws IOException {
+    static void restoreDatabaseFileFromBackUp(String backupFilePath, String destinationFilePath) throws IOException {
         File backupFile = new File(backupFilePath);
         File destinationFile = new File(destinationFilePath);
         // TODO: might want to do something else
@@ -231,6 +234,63 @@ class ModuleApp {
         }
     }
 
+    void deleteModule(int moduleRow) {
+
+
+        // delete from the database Array first
+        String[][] newDatabase = new String[this.database.length-1][4];
+        int j = 0;
+        for (int i=0; i<newDatabase.length; i++) {
+            if (i == moduleRow) j++;
+            newDatabase[i][0] = this.database[j][0];
+            newDatabase[i][1] = this.database[j][1];
+            newDatabase[i][2] = this.database[j][2];
+            newDatabase[i][3] = this.database[j][3];
+            j++;
+        }
+        this.database = newDatabase;
+
+       // delete from CSV
+        String databaseFileName = this.databaseFile.getName();
+        String tempDatabaseFileName = "temp_" + databaseFileName;
+       // TODO: Move to thread
+        BufferedReader br = null;
+        BufferedWriter bw = null;
+        try {
+            br = new BufferedReader(new FileReader(this.databaseFile));
+            bw = new BufferedWriter(new FileWriter(tempDatabaseFileName));
+            
+            String line;
+            int i = -1;
+            while ((line = br.readLine()) != null) {
+                i++;
+                if (i == moduleRow) continue;
+                bw.write(line+"\n");
+            }
+        } catch (Exception e) {
+            return;
+        } finally {
+            try {
+                if(br != null)
+                   br.close();
+            } catch (IOException e) {}
+
+            try {
+                if(bw != null)
+                   bw.close();
+            } catch (IOException e) {}
+        }
+
+        // TODO: Extract into a different function. Used in deleteModule() && updateModule()
+        // Delete old database file
+        if (this.databaseFile.delete()) {
+            // Reasign with the new database file saved as a tempFile
+            File newFile = new File(tempDatabaseFileName);
+            // Rename new database file to the original name
+            newFile.renameTo(this.databaseFile);
+            this.databaseFile = newFile;    
+        }
+    }
 
 
     // Helpers
@@ -240,6 +300,13 @@ class ModuleApp {
 		for (int i = 0; i < strArray.length; i++)
 			intArray[i] = Integer.parseInt(strArray[i]);		
 		return intArray;
+    }
+    private int linesInAFile(String fileDirectory) throws FileNotFoundException, IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(fileDirectory));
+        int lines = 0;
+        while (reader.readLine() != null) lines++;
+        reader.close();
+        return lines;
     }
 
 
