@@ -28,9 +28,9 @@ import java.util.regex.Pattern;
 class ModuleApp {
     // make private?:
     // String[][] database;
-    Pattern csvRegex;
-	Pattern moduleYearRegex;
-    File databaseFile;
+    private Pattern csvRegex;
+	private Pattern moduleYearRegex;
+    private File databaseFile;
     private Module[] db;
 
     ModuleApp() {
@@ -39,16 +39,9 @@ class ModuleApp {
 		this.moduleYearRegex = Pattern.compile("(?<=^...)(1|2|3|M|m)");
     }
 
-    
-    // Accessor methods
-    Module[] getDb() { return this.db; }
-    
-
     // TODO: normalize all queries by upcasing; normalize results as well?
     // TODO: Expand database if reached the limit (keep on adding until an exception is thrown?)
     void loadCSVFile(String databaseFileDirectory) throws FileNotFoundException, IOException {
-        
-        
         this.db = new Module[linesInAFile(databaseFileDirectory)];
         this.databaseFile = new File(databaseFileDirectory);
         BufferedReader reader = new BufferedReader(new FileReader(databaseFile));
@@ -65,6 +58,7 @@ class ModuleApp {
             String newLeaderName = csvMatcher.group(1);
             csvMatcher.find();
             String newLeaderEmail = csvMatcher.group(1);
+
             this.db[i] = new Module(newCode, newTitle, newLeaderName, newLeaderEmail);
 			i++;
 		}
@@ -83,7 +77,6 @@ class ModuleApp {
     }
 
     // JavaDoc: Describe how strings are used to generte dynamyc-length arrays
-    
     int[] findModuleRowsByYear(String moduleYearQuery) {
     	// if (moduleYearQuery.length() == 0) return new int[]{-1};
 
@@ -124,42 +117,13 @@ class ModuleApp {
     	return convertStringToIntArray(resultRows);
     }
 
-
-
-
-    Module getModule(int moduleRow) { return this.db[moduleRow]; }
-
-    String getCsvLine(String fileDirectory, int lineNumber) throws FileNotFoundException, IOException {
-        // FIXME: make sure line's not empty
-        BufferedReader reader = new BufferedReader(new FileReader(fileDirectory));
-        String line;
-        int i = 0;
-        while ((line = reader.readLine()) != null) {
-            if (i == lineNumber) {
-                break;
-            }
-            i++;
-        }
-        return line;
-    }
-
-
-
-
-
-    // String[] getModuleInfoAsACsvLine(int moduleRow) {
-    //     return new String;
-    //     String = "\""+database[moduleRow][0]+"\",\""+database[moduleRow][1]+"\",\""+database[moduleRow][2]+"\",\""+database[moduleRow][3]+"\"";
-    // }
-
     void updateModule(int moduleRow, String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) {
         // TODO: Validate first (format + if empty)
         // TODO: update, reload database
         // TODO: extract into to private methods updateDatabaseArray & updateDatabaseCSV, then call both in here after validating values
 
-        String databaseFileName = this.databaseFile.getName();
-        String tempDatabaseFileName = "temp_" + databaseFileName;
-        // System.out.println("original file name: " + databaseFileName + " temp: " + tempDatabaseFileName);
+
+        File tempDatabaseFile = new File("temp_" + this.databaseFile.getName());
 
 
         // update the database array
@@ -180,15 +144,13 @@ class ModuleApp {
         BufferedWriter bw = null;
         try {
             br = new BufferedReader(new FileReader(this.databaseFile));
-            bw = new BufferedWriter(new FileWriter(tempDatabaseFileName));
+            bw = new BufferedWriter(new FileWriter(tempDatabaseFile));
             String line;
             int i = 0;
 
             while ((line = br.readLine()) != null) {
                 if (i == moduleRow) { // TODO: Extract into a separate method:
-                    // System.out.println("before: " + line);
                     line = "\""+newModuleCode+"\",\""+ newModuleTitle +"\",\""+ newModuleLeaderName +"\",\""+newModuleLeaderEmail+"\"";
-                    // System.out.println("after: " + line);
                 }
                 bw.write(line+"\n");
                 i++;
@@ -207,25 +169,19 @@ class ModuleApp {
             } catch (IOException e) {}
         }
 
-        // TODO: Extract into a different function. Used in deleteModule() && updateModule()
-        // Delete old database file
-        if (this.databaseFile.delete()) {
-            // Reasign with the new database file saved as a tempFile
-            File newFile = new File(tempDatabaseFileName);
-            // Rename new database file to the original name
-            newFile.renameTo(this.databaseFile);
-            this.databaseFile = newFile;    
-        }
+        replaceFile(this.databaseFile, tempDatabaseFile);
     }
+
+
+
+
 
 
     void deleteModule(int moduleRow) {
         // delete from the database Array first
-        // DELETME
-        String[][] newDatabase = new String[this.db.length-1][4];
         Module[] newDB = new Module[this.db.length-1];
         int j = 0;
-        for (int i=0; i<newDatabase.length; i++) {
+        for (int i=0; i< newDB.length; i++) {
             if (i == moduleRow) j++;
             newDB[i] = this.db[j]; 
             j++;
@@ -233,14 +189,13 @@ class ModuleApp {
         this.db = newDB;
 
        // delete from CSV
-        String databaseFileName = this.databaseFile.getName();
-        String tempDatabaseFileName = "temp_" + databaseFileName;
+        File tempDatabaseFile = new File("temp_" + this.databaseFile.getName());
        // TODO: Move to thread
         BufferedReader br = null;
         BufferedWriter bw = null;
         try {
             br = new BufferedReader(new FileReader(this.databaseFile));
-            bw = new BufferedWriter(new FileWriter(tempDatabaseFileName));
+            bw = new BufferedWriter(new FileWriter(tempDatabaseFile));
             
             String line;
             int i = -1;
@@ -263,50 +218,63 @@ class ModuleApp {
             } catch (IOException e) {}
         }
 
-        // TODO: Extract into a different function. Used in deleteModule() && updateModule()
-        // Delete old database file
-        if (this.databaseFile.delete()) {
-            // Reasign with the new database file saved as a tempFile
-            File newFile = new File(tempDatabaseFileName);
-            // Rename new database file to the original name
-            newFile.renameTo(this.databaseFile);
-            this.databaseFile = newFile;    
-        }
+        replaceFile(this.databaseFile, tempDatabaseFile);
     }
-
 
 
     void createModule(String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) {
         // TODO: Validate (format + nonEmptyness) & Check for duplicates
-
-        // add to databaseArray:
-        // DELETEME
-        Module[] newDB = new Module[this.db.length+1];
-        // Copy old database into the new
-        for (int i=0; i<this.db.length; i++) {
+        Module[] newDB = new Module[this.db.length+1];         // add to databaseArray:
+        for (int i=0; i<this.db.length; i++) {                 // Copy old database into the new
             newDB[i] = this.db[i];
         }
-        // Add new module to the new database
-        newDB[newDB.length-1] = new Module(newModuleCode, newModuleTitle, newModuleLeaderName, newModuleLeaderEmail);
-        // reasign new database to the global database
-        this.db = newDB;
+        newDB[newDB.length-1] = new Module(newModuleCode, newModuleTitle, newModuleLeaderName, newModuleLeaderEmail);         // Add new module to the new database
+        this.db = newDB;         // reasign new database to the global database
 
-        // append line to the databaseCSVfile
-        // OPTIMIZE: extraction opportunity into appendLine(File file, String line) method
-        try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(this.databaseFile, true));
-            String line = "\""+newModuleCode+"\",\""+ newModuleTitle +"\",\""+newModuleLeaderName+"\",\""+newModuleLeaderEmail+"\"";
-            bw.write(line+"\n");
-            bw.close();
-        } catch (IOException e) {}
-
+        String line = "\""+newModuleCode+"\",\""+ newModuleTitle +"\",\""+newModuleLeaderName+"\",\""+newModuleLeaderEmail+"\"";
+        appendLineToFile(this.databaseFile, line); // append line to the databaseCSVfile
     }
 
 
 
     // Helpers
+    // Move unrelated into a Utils class?
     // private boolean notDuplicate(String moduleCode) {}
+    Module[] getDb() { return this.db; }
+    Module getModule(int moduleRow) { return this.db[moduleRow]; }
 
+
+
+    void replaceFile(File oldFile, File newFile) {
+        if (oldFile.delete()) {
+            newFile.renameTo(oldFile);      // Rename new database file to the original name
+            oldFile = newFile;    
+        }
+    }
+
+
+    String getCsvLine(String fileDirectory, int lineNumber) throws FileNotFoundException, IOException {
+        // FIXME: make sure line's not empty
+        BufferedReader reader = new BufferedReader(new FileReader(fileDirectory));
+        String line;
+        int i = 0;
+        while ((line = reader.readLine()) != null) {
+            if (i == lineNumber) {
+                break;
+            }
+            i++;
+        }
+        return line;
+    }
+
+    void appendLineToFile(File file, String line) {
+        // maybe should return a boolean if successful
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
+            bw.write(line+"\n");
+            bw.close();
+        } catch (IOException e) {}
+    }
     private int[] convertStringToIntArray(String str) {
 		String[] strArray = str.split(",");
 		int[] intArray = new int[strArray.length];
@@ -346,6 +314,7 @@ class ModuleApp {
             }
         }
     }
+
     
 
 }
