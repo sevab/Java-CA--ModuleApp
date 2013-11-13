@@ -15,7 +15,8 @@ class Module {
 	String leaderEmail;
 
 	
-	Module(String code, String title, String leaderName, String leaderEmail) {
+	Module(String code, String title, String leaderName, String leaderEmail) throws InvalidModuleFormatException, EmptyValueException {
+		ModuleValidator.validateModuleValues(code, title, leaderName, leaderEmail);
 		this.code = code;
 		this.title = title;
 		this.leaderName = leaderName;
@@ -40,5 +41,4 @@ class Module {
     	return new String[]{ this.code, this.title, this.leaderName, this.leaderEmail };
     }
     // String toString() {}
-
 }

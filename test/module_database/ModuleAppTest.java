@@ -17,7 +17,7 @@ import org.junit.Ignore;
  *
  * @author sevabaskin
  */
-public class ModuleAppTest {
+@Ignore public class ModuleAppTest {
     String test_csv_file;
     String backup_csv_file;
     public ModuleAppTest() {
@@ -262,7 +262,33 @@ public class ModuleAppTest {
         // Verify the DB that it has not been added
     }
 
+    // @Test
+    // public void shouldThrowAnInvalidModuleFormatException() throws FileNotFoundException, IOException{
+    //     ModuleApp test = new ModuleApp();
+    //     test.loadCSVFile(this.test_csv_file);
+    //     try {                // invalid module code
+    //         test.createModule("ECM140","Programming","Jonathan Fieldsend","J.E.Fieldsend@exeter.ac.uk");
+    //         fail( "Missing exception" );
+    //     } catch (InvalidModuleFormatException e){}
+    //     try {                // empty module code
+    //         test.createModule("","Programming","Jonathan Fieldsend","J.E.Fieldsend@exeter.ac.uk");
+    //         fail( "Missing exception" );
+    //     } catch (InvalidModuleFormatException e){}
+    //     try {                // empty module title
+    //         test.createModule("ECM1401","","Jonathan Fieldsend","J.E.Fieldsend@exeter.ac.uk");
+    //         fail( "Missing exception" );
+    //     } catch (InvalidModuleFormatException e){}
+    //     try {                // empty module leader name
+    //         test.createModule("ECM1401","Programming","","J.E.Fieldsend@exeter.ac.uk");
+    //         fail( "Missing exception" );
+    //     } catch (InvalidModuleFormatException e){}
+    //     try {                // invalid email
+    //         test.createModule("ECM1401","Programming","Jonathan Fieldsend","J.E.Fieldsend@");
+    //         fail( "Missing exception" );
+    //     } catch (InvalidModuleFormatException e){}
 
+    //     ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
+    // }
 
     // @Test
     // public void testCannotAddDuplicates() throws FileNotFoundException, IOException {}

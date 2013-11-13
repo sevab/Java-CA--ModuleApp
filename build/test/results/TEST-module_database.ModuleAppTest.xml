@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="0" hostname="Sevas-MacBook-Air.local" name="module_database.ModuleAppTest" tests="10" time="0.15" timestamp="2013-11-13T17:24:58">
+<testsuite errors="0" failures="0" hostname="Sevas-MacBook-Air.local" name="module_database.ModuleAppTest" tests="0" time="0.052" timestamp="2013-11-13T21:09:46">
   <properties>
     <property name="default.javac.source" value="1.6" />
     <property name="file.encoding.pkg" value="sun.io" />
@@ -71,7 +71,7 @@
     <property name="libs.JAXB-ENDORSED.src" value="" />
     <property name="libs.hibernate-persistence.javadoc" value="" />
     <property name="libs.ejb3-persistence.classpath" value="/Applications/NetBeans/NetBeans 7.3.1.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/ejb3-persistence.jar" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner module_database.ModuleAppTest filtertrace=true haltOnError=false haltOnFailure=false showoutput=true outputtoformatters=true logfailedtests=true logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/test/results/TEST-module_database.ModuleAppTest.xml crashfile=/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/junitvmwatcher4424024793789927651.properties propsfile=/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/junit1847091680835937999.properties" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner module_database.ModuleAppTest filtertrace=true haltOnError=false haltOnFailure=false showoutput=true outputtoformatters=true logfailedtests=true logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/test/results/TEST-module_database.ModuleAppTest.xml crashfile=/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/junitvmwatcher5610881658970469995.properties propsfile=/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/junit7221558611893333010.properties" />
     <property name="built-jar.properties" value="/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/built-jar.properties" />
     <property name="ant.file.Coursework_1" value="/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build.xml" />
     <property name="libs.junit.src" value="" />
@@ -254,16 +254,6 @@
     <property name="sun.arch.data.model" value="64" />
     <property name="mkdist.disabled" value="true" />
   </properties>
-  <testcase classname="module_database.ModuleAppTest" name="testColumnData" time="0.012" />
-  <testcase classname="module_database.ModuleAppTest" name="testSearchByModuleCode" time="0.012" />
-  <testcase classname="module_database.ModuleAppTest" name="testSearchByModuleYear" time="0.011" />
-  <testcase classname="module_database.ModuleAppTest" name="testSearchByModuleLeaderName" time="0.0060" />
-  <testcase classname="module_database.ModuleAppTest" name="testSearchByModuleLeaderEmail" time="0.0040" />
-  <testcase classname="module_database.ModuleAppTest" name="testGetCsvLine" time="0.0010" />
-  <testcase classname="module_database.ModuleAppTest" name="testModuleUpdate" time="0.026" />
-  <testcase classname="module_database.ModuleAppTest" name="testModuleDelete" time="0.0060" />
-  <testcase classname="module_database.ModuleAppTest" name="testModuleCreate" time="0.0040" />
-  <testcase classname="module_database.ModuleAppTest" name="shouldThrowADuplicateExceptionWhenAddingADuplicate" time="0.0020" />
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

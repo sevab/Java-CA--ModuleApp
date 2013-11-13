@@ -10,6 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+
 /**
  *
  * @author sevabaskin
@@ -23,10 +24,10 @@ public class ModuleTest {
     String moduleLeaderEmail;
 
     public ModuleTest() {
-        this.moduleCode = "ECM9999";
+        this.moduleCode = "ECM1999";
         this.moduleTitle = "Test Title";
         this.moduleLeaderName = "Test Leader Name";
-        this.moduleLeaderEmail = "test@email.co.uk";
+        this.moduleLeaderEmail = "test@ex.ac.uk";
     }
     
     @BeforeClass
@@ -38,7 +39,7 @@ public class ModuleTest {
     }
 
     // @Before
-    void createTestModule() {
+    void createTestModule() throws InvalidModuleFormatException, EmptyValueException {
         this.testModule = new Module(this.moduleCode, this.moduleTitle, this.moduleLeaderName, this.moduleLeaderEmail);
     }
     // @Before
@@ -49,7 +50,7 @@ public class ModuleTest {
 
 
     @Test
-    public void testReadingModuleInfo() {
+    public void testReadingModuleInfo() throws InvalidModuleFormatException, EmptyValueException {
         createTestModule();
         Assert.assertEquals(this.moduleCode, this.testModule.getCode());
         Assert.assertEquals(this.moduleTitle, this.testModule.getTitle());
@@ -58,9 +59,9 @@ public class ModuleTest {
     }
 
     @Test
-    public void testUpdatingModuleInfo() {
+    public void testUpdatingModuleInfo() throws InvalidModuleFormatException, EmptyValueException {
         createTestModule();
-        String newCode = "FFF1234";
+        String newCode = "FFF1234"; // INVALID FORMAT
         String newTitle = "Updated Title";
         String newLeaderName = "Updated Leader Name";
         String newLeaderEmail = "Updated Leader Email";
@@ -77,9 +78,71 @@ public class ModuleTest {
     }
 
     @Test
-    public void testGettingFullModuleInfo() {
+    public void testGettingFullModuleInfo() throws InvalidModuleFormatException, EmptyValueException {
         createTestModule();
-        String[] expectedArray = {"ECM9999", "Test Title", "Test Leader Name", "test@email.co.uk"};
+        String[] expectedArray = {"ECM1999", "Test Title", "Test Leader Name", "test@ex.ac.uk"};
         Assert.assertEquals(expectedArray, this.testModule.getFullInfo());
     }
+
+    @Test
+    public void shouldThrowInvalidModuleFormatExceptionOnCreatingAnInvalidModule() throws InvalidModuleFormatException, EmptyValueException {
+        try {                // invalid module code
+            new Module("ECM140","Programming","Jonathan Fieldsend","J.E.Fieldsend@exeter.ac.uk");
+            fail( "Missing exception" );
+        } catch (InvalidModuleFormatException e){
+            assertTrue(e.getMessage().equals("You've entered invalid module code. Please enter a module code in the format ABC1234, ABC2234, ABC3234 or ABCM123."));
+        }
+        try {                // empty module code
+            new Module("","Programming","Jonathan Fieldsend","J.E.Fieldsend@exeter.ac.uk");
+            fail( "Missing exception" );
+        } catch (EmptyValueException e){
+            assertTrue(e.getMessage().equals("You forgot to enter module's code, please enter one."));
+        }
+        try {                // empty module title
+            new Module("ECM1401","","Jonathan Fieldsend","J.E.Fieldsend@exeter.ac.uk");
+            fail( "Missing exception" );
+        } catch (EmptyValueException e){
+            assertTrue(e.getMessage().equals("You forgot to enter module's title, please enter one."));
+        }
+        try {                // empty module leader name
+            new Module("ECM1401","Programming","","J.E.Fieldsend@exeter.ac.uk");
+            fail( "Missing exception" );
+        } catch (EmptyValueException e){
+            assertTrue(e.getMessage().equals("You forgot to enter module's leader name, please enter one."));
+        }
+        try {                // empty email address
+            new Module("ECM1401","Programming","Jonathan Fieldsend","");
+            fail( "Missing exception" );
+        } catch (EmptyValueException e){
+            assertTrue(e.getMessage().equals("You forgot to enter module's leader email, please enter one."));
+        }
+        try {                // empty domain part of email address
+            new Module("ECM1401","Programming","Jonathan Fieldsend","J.E.Fieldsend@");
+            fail( "Missing exception" );
+        } catch (InvalidModuleFormatException e){
+            assertTrue(e.getMessage().equals("You've entered an invalid email. Please, make sure it's in the format xyz@exeter.ac.uk or xyz@ex.ac.uk."));
+        }
+        try {                // empty local part of email address
+            new Module("ECM1401","Programming","Jonathan Fieldsend","@exeter.ac.uk");
+            fail( "Missing exception" );
+        } catch (InvalidModuleFormatException e){
+            assertTrue(e.getMessage().equals("You've entered an invalid email. Please, make sure it's in the format xyz@exeter.ac.uk or xyz@ex.ac.uk."));
+        }
+        try {                // invalid domain
+            new Module("ECM1401","Programming","Jonathan Fieldsend","test@test.co.uk");
+            fail( "Missing exception" );
+        } catch (InvalidModuleFormatException e){
+            assertTrue(e.getMessage().equals("You've entered an invalid email. Please, make sure it's in the format xyz@exeter.ac.uk or xyz@ex.ac.uk."));
+        }
+        // Test that modules with valid emails are created
+        new Module("ECM1401","Programming","Jonathan Fieldsend","test@ex.ac.uk");
+        new Module("ECM1401","Programming","Jonathan Fieldsend","test@exeter.ac.uk");
+    }
+    // Throw a nice message of what was entered and what was expected to be entered
+
+
+    // public void shouldThrowInvalidModuleFormatExceptionOnUpdatingModuleWithAnInvalidModule() {}
+
 }
+
+        
