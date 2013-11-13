@@ -144,20 +144,20 @@ public class ModuleAppTest {
     public void testGetCsvLine() throws FileNotFoundException, IOException {
         ModuleApp test = new ModuleApp();
         String expected = "\"ECM1402\",\"Computer Systems\",\"Zena Wood\",\"Z.M.Wood@exeter.ac.uk\"";
-        String actual = test.getCsvLine(this.test_csv_file, 1);
+        String actual = ModuleAppHelper.getCsvLine(this.test_csv_file, 1);
         Assert.assertEquals(expected, actual);
     }
 
     // Next: Validate, Verify Duplicates
     @Test
     public void testModuleUpdate() throws FileNotFoundException, IOException {
-        ModuleApp.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
+        ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
         ModuleApp test = new ModuleApp();
         test.loadCSVFile(this.test_csv_file);
 
         // Before Update:
         String expectedLine = "\"ECM1402\",\"Computer Systems\",\"Zena Wood\",\"Z.M.Wood@exeter.ac.uk\"";
-        String actualLine = test.getCsvLine(this.test_csv_file, 1);
+        String actualLine = ModuleAppHelper.getCsvLine(this.test_csv_file, 1);
         Assert.assertEquals(expectedLine, actualLine);
         String[] expectedArray = {"ECM1402","Computer Systems","Zena Wood","Z.M.Wood@exeter.ac.uk"};
         String[] actualArray = test.getModule(1).getFullInfo();
@@ -170,21 +170,21 @@ public class ModuleAppTest {
         String[] actualArrayTwo = test.getModule(1).getFullInfo();
         Assert.assertArrayEquals(expectedArrayTwo, actualArrayTwo);
         expectedLine = "\"ECM9999\",\"Test Name\",\"Test Name\",\"test@email.co.uk\"";
-        actualLine = test.getCsvLine(this.test_csv_file, 1);
+        actualLine = ModuleAppHelper.getCsvLine(this.test_csv_file, 1);
         Assert.assertEquals(expectedLine, actualLine);
         // Restore database file back to the original, pre-test state
-        ModuleApp.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
+        ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
     }
 
     @Test
     public void testModuleDelete() throws FileNotFoundException, IOException {
-        ModuleApp.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
+        ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
         ModuleApp test = new ModuleApp();
         test.loadCSVFile(this.test_csv_file);
 
         // Before Update:
         String expectedLine = "\"ECM1402\",\"Computer Systems\",\"Zena Wood\",\"Z.M.Wood@exeter.ac.uk\"";
-        String actualLine = test.getCsvLine(this.test_csv_file, 1);
+        String actualLine = ModuleAppHelper.getCsvLine(this.test_csv_file, 1);
         Assert.assertEquals(expectedLine, actualLine);
         String[] expectedArray = {"ECM1402","Computer Systems","Zena Wood","Z.M.Wood@exeter.ac.uk"};
         String[] actualArray = test.getModule(1).getFullInfo();
@@ -194,7 +194,7 @@ public class ModuleAppTest {
 
         // After Update:
         expectedLine = "\"ECM1406\",\"Data Structures and Team Project\",\"Zena Wood\",\"Z.M.Wood@exeter.ac.uk\"";
-        actualLine = test.getCsvLine(this.test_csv_file, 1);
+        actualLine = ModuleAppHelper.getCsvLine(this.test_csv_file, 1);
         Assert.assertEquals(expectedLine, actualLine);
         String[] expectedArrayTwo = {"ECM1406","Data Structures and Team Project","Zena Wood","Z.M.Wood@exeter.ac.uk"};
         String[] actualArrayTwo = test.getModule(1).getFullInfo();
@@ -202,19 +202,19 @@ public class ModuleAppTest {
         
 
         // Restore database file back to the original, pre-test state
-        ModuleApp.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
+        ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
     }
 
 
    @Test
-    public void testModuleCreate() throws FileNotFoundException, IOException {
-        ModuleApp.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
+    public void testModuleCreate() throws FileNotFoundException, IOException, DuplicateModuleException {
+        ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
         ModuleApp test = new ModuleApp();
         test.loadCSVFile(this.test_csv_file);
 
         // Before Create:
         String expectedLine = null;
-        String actualLine = test.getCsvLine(this.test_csv_file, 60);
+        String actualLine = ModuleAppHelper.getCsvLine(this.test_csv_file, 60);
         Assert.assertEquals(expectedLine, actualLine);
         try {
             String[] expectedArray = null;
@@ -230,15 +230,37 @@ public class ModuleAppTest {
         String[] actualArrayTwo = test.getModule(60).getFullInfo();
         Assert.assertArrayEquals(expectedArrayTwo, actualArrayTwo);
         expectedLine = "\"ECM9999\",\"Test Name\",\"Test Name\",\"test@email.co.uk\"";
-        actualLine = test.getCsvLine(this.test_csv_file, 60);
+        actualLine = ModuleAppHelper.getCsvLine(this.test_csv_file, 60);
         Assert.assertEquals(expectedLine, actualLine);
         
         
 
         // // Restore database file back to the original, pre-test state
-        ModuleApp.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
+        ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
     }
+    // (expected=UnknownUserException.class)
+    @Test
+    public void shouldThrowADuplicateExceptionWhenAddingADuplicate() throws FileNotFoundException, IOException, DuplicateModuleException {
 
+        ModuleApp test = new ModuleApp();
+        test.loadCSVFile(this.test_csv_file);
+
+        int dbLengthBefore = test.getDb().length;
+        try {
+            // try adding a duplicate
+            test.createModule("ECM1401","Programming","Jonathan Fieldsend","J.E.Fieldsend@exeter.ac.uk");
+            fail( "Missing exception" );
+        } catch (DuplicateModuleException e) {}
+
+        int dbLengthAfter = test.getDb().length;
+
+        Assert.assertEquals(dbLengthAfter, dbLengthAfter);      // assert database length before and after the attempt to add a new module stays the same
+        String lastModuleCode = test.getModule(test.getDb().length-1).getCode();
+        Assert.assertEquals("NSCM002", lastModuleCode);
+
+        ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
+        // Verify the DB that it has not been added
+    }
 
 
 

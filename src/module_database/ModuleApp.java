@@ -4,6 +4,7 @@
 *
 *   TODO: when doing threading, warn user if he tries to quit the app while a tread hasn't finished writing to a file
 *   TODO: decide on uniform variable names (e.g. newModuleTitle vs newTitle)
+*   TODO: shall we return Module[] arrays instead of integer arrays? also, how about renaming findModuleRowByTitle to findByTitle, ModuleApp can then be renamed into ModulesDatabase
 */
 
 package module_database;
@@ -11,13 +12,10 @@ package module_database;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,7 +40,7 @@ class ModuleApp {
     // TODO: normalize all queries by upcasing; normalize results as well?
     // TODO: Expand database if reached the limit (keep on adding until an exception is thrown?)
     void loadCSVFile(String databaseFileDirectory) throws FileNotFoundException, IOException {
-        this.db = new Module[linesInAFile(databaseFileDirectory)];
+        this.db = new Module[ModuleAppHelper.linesInAFile(databaseFileDirectory)];
         this.databaseFile = new File(databaseFileDirectory);
         BufferedReader reader = new BufferedReader(new FileReader(databaseFile));
         String line;
@@ -88,7 +86,7 @@ class ModuleApp {
     		if (candidateResult.equals(moduleYearQuery))
     			resultRows = resultRows + i + ",";
     	}
-    	return convertStringToIntArray(resultRows);
+    	return ModuleAppHelper.convertStringToIntArray(resultRows);
     }
 
     int[] findModuleRowsByLeaderName(String moduleLeaderNameQuery) {
@@ -101,7 +99,7 @@ class ModuleApp {
     		if (moduleLeaderNameMatcher.lookingAt())
     			resultRows = resultRows + i + ",";
     	}
-    	return convertStringToIntArray(resultRows);
+    	return ModuleAppHelper.convertStringToIntArray(resultRows);
     }
 
     int[] findModuleRowsByLeaderEmail(String moduleLeaderEmailQuery) {
@@ -114,7 +112,7 @@ class ModuleApp {
     		if (moduleLeaderEmailMatcher.lookingAt())
     			resultRows = resultRows + i + ",";
     	}
-    	return convertStringToIntArray(resultRows);
+    	return ModuleAppHelper.convertStringToIntArray(resultRows);
     }
 
     void updateModule(int moduleRow, String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) {
@@ -169,7 +167,7 @@ class ModuleApp {
             } catch (IOException e) {}
         }
 
-        replaceFile(this.databaseFile, tempDatabaseFile);
+        ModuleAppHelper.replaceFile(this.databaseFile, tempDatabaseFile);
     }
 
 
@@ -218,11 +216,12 @@ class ModuleApp {
             } catch (IOException e) {}
         }
 
-        replaceFile(this.databaseFile, tempDatabaseFile);
+        ModuleAppHelper.replaceFile(this.databaseFile, tempDatabaseFile);
     }
 
 
-    void createModule(String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) {
+    void createModule(String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) throws DuplicateModuleException {
+        verifyNotDuplicate(newModuleCode);
         // TODO: Validate (format + nonEmptyness) & Check for duplicates
         Module[] newDB = new Module[this.db.length+1];         // add to databaseArray:
         for (int i=0; i<this.db.length; i++) {                 // Copy old database into the new
@@ -232,89 +231,24 @@ class ModuleApp {
         this.db = newDB;         // reasign new database to the global database
 
         String line = "\""+newModuleCode+"\",\""+ newModuleTitle +"\",\""+newModuleLeaderName+"\",\""+newModuleLeaderEmail+"\"";
-        appendLineToFile(this.databaseFile, line); // append line to the databaseCSVfile
+        ModuleAppHelper.appendLineToFile(this.databaseFile, line); // append line to the databaseCSVfile
     }
 
 
+    void verifyNotDuplicate(String moduleCode) throws DuplicateModuleException {
+        for (Module module : this.db) {
+            if (module.getCode().equals(moduleCode)){
+                throw new DuplicateModuleException();
+            }
+        }
+    }
 
-    // Helpers
-    // Move unrelated into a Utils class?
+
+    // Getters
     // private boolean notDuplicate(String moduleCode) {}
     Module[] getDb() { return this.db; }
     Module getModule(int moduleRow) { return this.db[moduleRow]; }
-
-
-
-    void replaceFile(File oldFile, File newFile) {
-        if (oldFile.delete()) {
-            newFile.renameTo(oldFile);      // Rename new database file to the original name
-            oldFile = newFile;    
-        }
-    }
-
-
-    String getCsvLine(String fileDirectory, int lineNumber) throws FileNotFoundException, IOException {
-        // FIXME: make sure line's not empty
-        BufferedReader reader = new BufferedReader(new FileReader(fileDirectory));
-        String line;
-        int i = 0;
-        while ((line = reader.readLine()) != null) {
-            if (i == lineNumber) {
-                break;
-            }
-            i++;
-        }
-        return line;
-    }
-
-    void appendLineToFile(File file, String line) {
-        // maybe should return a boolean if successful
-        try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
-            bw.write(line+"\n");
-            bw.close();
-        } catch (IOException e) {}
-    }
-    private int[] convertStringToIntArray(String str) {
-		String[] strArray = str.split(",");
-		int[] intArray = new int[strArray.length];
-		for (int i = 0; i < strArray.length; i++)
-			intArray[i] = Integer.parseInt(strArray[i]);		
-		return intArray;
-    }
-    private int linesInAFile(String fileDirectory) throws FileNotFoundException, IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(fileDirectory));
-        int lines = 0;
-        while (reader.readLine() != null) lines++;
-        reader.close();
-        return lines;
-    }
-
-    // To be used by the test suite to restore the database back to its original state after modification
-    static void restoreDatabaseFileFromBackUp(String backupFilePath, String destinationFilePath) throws IOException {
-        File backupFile = new File(backupFilePath);
-        File destinationFile = new File(destinationFilePath);
-        // TODO: might want to do something else
-        if(!destinationFile.exists()) {
-            destinationFile.createNewFile();
-        }
-        FileChannel source = null;
-        FileChannel destination = null;
-        try {
-            source = new FileInputStream(backupFile).getChannel();
-            destination = new FileOutputStream(destinationFile).getChannel();
-            destination.transferFrom(source, 0, source.size());
-        }
-        finally {
-            if(source != null) {
-                source.close();
-            }
-            if(destination != null) {
-                destination.close();
-            }
-        }
-    }
-
+ 
     
 
 }
