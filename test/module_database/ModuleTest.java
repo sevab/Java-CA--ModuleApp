@@ -61,10 +61,10 @@ public class ModuleTest {
     @Test
     public void testUpdatingModuleInfo() throws InvalidModuleFormatException, EmptyValueException {
         createTestModule();
-        String newCode = "FFF1234"; // INVALID FORMAT
+        String newCode = "FFF1234";
         String newTitle = "Updated Title";
         String newLeaderName = "Updated Leader Name";
-        String newLeaderEmail = "Updated Leader Email";
+        String newLeaderEmail = "test_email.123@exeter.ac.uk";
 
         this.testModule.setCode(newCode);
         this.testModule.setTitle(newTitle);
@@ -138,10 +138,64 @@ public class ModuleTest {
         new Module("ECM1401","Programming","Jonathan Fieldsend","test@ex.ac.uk");
         new Module("ECM1401","Programming","Jonathan Fieldsend","test@exeter.ac.uk");
     }
-    // Throw a nice message of what was entered and what was expected to be entered
 
 
-    // public void shouldThrowInvalidModuleFormatExceptionOnUpdatingModuleWithAnInvalidModule() {}
+    public void shouldThrowInvalidModuleFormatExceptionOnUpdatingModuleWithInvalidValues() throws InvalidModuleFormatException, EmptyValueException {
+        Module testModule = new Module("ECM1401","Programming","Jonathan Fieldsend","test@ex.ac.uk");
+
+        try {                // invalid module code
+            testModule.setCode("ECM140");
+            fail( "Missing exception" );
+        } catch (InvalidModuleFormatException e){
+            assertTrue(e.getMessage().equals("You've entered invalid module code. Please enter a module code in the format ABC1234, ABC2234, ABC3234 or ABCM123."));
+        }
+        try {                // empty module code
+            testModule.setCode("");
+            fail( "Missing exception" );
+        } catch (EmptyValueException e){
+            assertTrue(e.getMessage().equals("You forgot to enter module's code, please enter one."));
+        }
+        try {                // empty module title
+            testModule.setTitle("");
+            fail( "Missing exception" );
+        } catch (EmptyValueException e){
+            assertTrue(e.getMessage().equals("You forgot to enter module's title, please enter one."));
+        }
+        try {                // empty module leader name
+            testModule.setLeaderName("");
+            fail( "Missing exception" );
+        } catch (EmptyValueException e){
+            assertTrue(e.getMessage().equals("You forgot to enter module's leader name, please enter one."));
+        }
+        try {                // empty email address
+            testModule.setLeaderEmail("");
+            fail( "Missing exception" );
+        } catch (EmptyValueException e){
+            assertTrue(e.getMessage().equals("You forgot to enter module's leader email, please enter one."));
+        }
+        try {                // empty domain part of email address
+            testModule.setLeaderEmail("J.E.Fieldsend@");
+            fail( "Missing exception" );
+        } catch (InvalidModuleFormatException e){
+            assertTrue(e.getMessage().equals("You've entered an invalid email. Please, make sure it's in the format xyz@exeter.ac.uk or xyz@ex.ac.uk."));
+        }
+        try {                // empty local part of email address
+            testModule.setLeaderEmail("@exeter.ac.uk");
+            fail( "Missing exception" );
+        } catch (InvalidModuleFormatException e){
+            assertTrue(e.getMessage().equals("You've entered an invalid email. Please, make sure it's in the format xyz@exeter.ac.uk or xyz@ex.ac.uk."));
+        }
+        try {                // invalid domain
+            testModule.setLeaderEmail("test@test.co.uk");
+            fail( "Missing exception" );
+        } catch (InvalidModuleFormatException e){
+            assertTrue(e.getMessage().equals("You've entered an invalid email. Please, make sure it's in the format xyz@exeter.ac.uk or xyz@ex.ac.uk."));
+        }
+        // Test that valid emails can be input
+        testModule.setLeaderEmail("test@ex.ac.uk");
+        testModule.setLeaderEmail("test@exeter.ac.uk");
+
+    }
 
 }
 

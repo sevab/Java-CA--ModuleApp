@@ -22,13 +22,12 @@ public class ModuleValidator {
 
 
 	public static void validateModuleValues(String code, String title, String leaderName, String leaderEmail) throws InvalidModuleFormatException, EmptyValueException {
-		validateModuleCode(code);
-		validadeEmptyness(title, emptyModuleTitleErrorMessage);
-		validadeEmptyness(leaderName, emptyModuleLeaderNameErrorMessage);
+		validateCode(code);
+		validateTitle(title);
+		validateLeaderName(leaderName);
 		validateEmail(leaderEmail);
 	}
-
-    private static void validateModuleCode(String moduleCode) throws InvalidModuleFormatException, EmptyValueException  {
+    public static void validateCode(String moduleCode) throws InvalidModuleFormatException, EmptyValueException  {
     	validadeEmptyness(moduleCode, emptyModuleCodeErrorMessage);
     	Pattern moduleCodeRegex = Pattern.compile("[A-Z]{3}(1|2|3|M)\\d{3}");
     	Matcher moduleCodeMatch = moduleCodeRegex.matcher(moduleCode);
@@ -37,7 +36,7 @@ public class ModuleValidator {
     		throw new InvalidModuleFormatException(invalidModuleCodeFormatErrorMessage);
     	}
     }
-    private static void validateEmail(String email) throws InvalidModuleFormatException, EmptyValueException  {
+    public static void validateEmail(String email) throws InvalidModuleFormatException, EmptyValueException  {
     	validadeEmptyness(email, emptyModuleLeaderEmailErrorMessage);
     	Pattern emailRegex = Pattern.compile(".+\\@(exeter.ac.uk|ex.ac.uk)");
     	Matcher emailMatch = emailRegex.matcher(email);
@@ -46,13 +45,15 @@ public class ModuleValidator {
     		throw new InvalidModuleFormatException(invalidEmailFormatErrorMessage);
     	}
     }
+    public static void validateTitle(String moduleTitle) throws EmptyValueException {
+    	validadeEmptyness(moduleTitle, emptyModuleTitleErrorMessage);
+    }
+    public static void validateLeaderName(String leaderName) throws EmptyValueException {
+		validadeEmptyness(leaderName, emptyModuleLeaderNameErrorMessage);
+    }
     private static void validadeEmptyness(String str, String message) throws EmptyValueException {
     	if (str.equals("")) {
     		throw new EmptyValueException(message);
     	}
     }
-
-
-
-
 }
