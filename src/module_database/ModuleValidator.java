@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package module_database;
 
 import java.util.regex.Matcher;
@@ -27,24 +23,14 @@ public class ModuleValidator {
 		validateLeaderName(leaderName);
 		validateEmail(leaderEmail);
 	}
-    public static void validateCode(String moduleCode) throws InvalidModuleFormatException, EmptyValueException  {
-    	validadeEmptyness(moduleCode, emptyModuleCodeErrorMessage);
-    	Pattern moduleCodeRegex = Pattern.compile("[A-Z]{3}(1|2|3|M)\\d{3}");
-    	Matcher moduleCodeMatch = moduleCodeRegex.matcher(moduleCode);
-
-    	if (!moduleCodeMatch.matches()) { // rename to value-specific exception?
-    		throw new InvalidModuleFormatException(invalidModuleCodeFormatErrorMessage);
-    	}
-    }
-    public static void validateEmail(String email) throws InvalidModuleFormatException, EmptyValueException  {
-    	validadeEmptyness(email, emptyModuleLeaderEmailErrorMessage);
-    	Pattern emailRegex = Pattern.compile(".+\\@(exeter.ac.uk|ex.ac.uk)");
-    	Matcher emailMatch = emailRegex.matcher(email);
-
-    	if (!emailMatch.matches()) {
-    		throw new InvalidModuleFormatException(invalidEmailFormatErrorMessage);
-    	}
-    }
+	public static void validateCode(String moduleCode) throws InvalidModuleFormatException, EmptyValueException  {
+	    validadeEmptyness(moduleCode, emptyModuleCodeErrorMessage);
+	    validatePattern(moduleCode, "[A-Z]{3}(1|2|3|M)\\d{3}", invalidModuleCodeFormatErrorMessage);
+	}
+	public static void validateEmail(String email) throws InvalidModuleFormatException, EmptyValueException  {
+	    validadeEmptyness(email, emptyModuleLeaderEmailErrorMessage);
+	    validatePattern(email, ".+\\@(exeter.ac.uk|ex.ac.uk)", invalidEmailFormatErrorMessage);
+	}
     public static void validateTitle(String moduleTitle) throws EmptyValueException {
     	validadeEmptyness(moduleTitle, emptyModuleTitleErrorMessage);
     }
@@ -56,4 +42,10 @@ public class ModuleValidator {
     		throw new EmptyValueException(message);
     	}
     }
+    private static void validatePattern(String userInput, String pattern, String errorMessage)  throws InvalidModuleFormatException, EmptyValueException {
+	    Pattern regex = Pattern.compile(pattern);
+	    Matcher match = regex.matcher(userInput);
+	    if (!match.matches())
+	        throw new InvalidModuleFormatException(errorMessage);
+	}
 }
