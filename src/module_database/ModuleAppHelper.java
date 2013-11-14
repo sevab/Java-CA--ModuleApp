@@ -100,4 +100,8 @@ public class ModuleAppHelper {
             }
         }
     }
+
+    // static void isNotEmpty(String str) {
+    //     return (str.equals("")) ? false : true;
+    // }
 }

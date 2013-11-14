@@ -24,8 +24,6 @@ import java.util.regex.Pattern;
  * @author sevabaskin
  */
 class ModuleApp {
-    // make private?:
-    // String[][] database;
     private Pattern csvRegex;
 	private Pattern moduleYearRegex;
     private File databaseFile;
@@ -39,7 +37,7 @@ class ModuleApp {
 
     // TODO: normalize all queries by upcasing; normalize results as well?
     // TODO: Expand database if reached the limit (keep on adding until an exception is thrown?)
-    void loadCSVFile(String databaseFileDirectory) throws FileNotFoundException, IOException {
+    void loadCSVFile(String databaseFileDirectory) throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException {
         this.db = new Module[ModuleAppHelper.linesInAFile(databaseFileDirectory)];
         this.databaseFile = new File(databaseFileDirectory);
         BufferedReader reader = new BufferedReader(new FileReader(databaseFile));
@@ -115,65 +113,32 @@ class ModuleApp {
     	return ModuleAppHelper.convertStringToIntArray(resultRows);
     }
 
-    void updateModule(int moduleRow, String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) {
-        // TODO: Validate first (format + if empty)
-        // TODO: update, reload database
+    void updateModule(int moduleRow, String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) throws InvalidModuleFormatException, EmptyValueException, DuplicateModuleException {
         // TODO: extract into to private methods updateDatabaseArray & updateDatabaseCSV, then call both in here after validating values
-
 
         File tempDatabaseFile = new File("temp_" + this.databaseFile.getName());
 
-
         // update the database array
         // FIXME: shall we perform this after updating CSV file in case of errors? But errors should be caught.
-        // Extract into Validator.isNotEmpty(String str)
-        if (!newModuleCode.equals(""))
-            getModule(moduleRow).setCode(newModuleCode);
+
+        // If not empty & not the same as existing value
+        Module moduleToUpdate = getModule(moduleRow);
+
+        if (!newModuleCode.equals("") && !newModuleCode.equals(moduleToUpdate.getCode()))
+            verifyNotDuplicate(newModuleCode);
+            moduleToUpdate.setCode(newModuleCode);
         if (!newModuleTitle.equals(""))
-            getModule(moduleRow).setTitle(newModuleTitle);
+            moduleToUpdate.setTitle(newModuleTitle);
         if (!newModuleLeaderName.equals(""))
-            getModule(moduleRow).setLeaderName(newModuleLeaderName);
+            moduleToUpdate.setLeaderName(newModuleLeaderName);
         if (!newModuleLeaderEmail.equals(""))
-            getModule(moduleRow).setLeaderEmail(newModuleLeaderEmail);
+            moduleToUpdate.setLeaderEmail(newModuleLeaderEmail);
 
         // update the CSV file
         // TODO: Move to thread
-        BufferedReader br = null;
-        BufferedWriter bw = null;
-        try {
-            br = new BufferedReader(new FileReader(this.databaseFile));
-            bw = new BufferedWriter(new FileWriter(tempDatabaseFile));
-            String line;
-            int i = 0;
-
-            while ((line = br.readLine()) != null) {
-                if (i == moduleRow) { // TODO: Extract into a separate method:
-                    line = "\""+newModuleCode+"\",\""+ newModuleTitle +"\",\""+ newModuleLeaderName +"\",\""+newModuleLeaderEmail+"\"";
-                }
-                bw.write(line+"\n");
-                i++;
-            }
-        } catch (Exception e) {
-            return;
-        } finally {
-            try {
-                if(br != null)
-                   br.close();
-            } catch (IOException e) {}
-
-            try {
-                if(bw != null)
-                   bw.close();
-            } catch (IOException e) {}
-        }
-
-        ModuleAppHelper.replaceFile(this.databaseFile, tempDatabaseFile);
+        String substituteLine = "\""+newModuleCode+"\",\""+ newModuleTitle +"\",\""+ newModuleLeaderName +"\",\""+newModuleLeaderEmail+"\"";
+        modifyLineInAFile(this.databaseFile, moduleRow, "update", substituteLine);
     }
-
-
-
-
-
 
     void deleteModule(int moduleRow) {
         // delete from the database Array first
@@ -186,20 +151,27 @@ class ModuleApp {
         }
         this.db = newDB;
 
-       // delete from CSV
-        File tempDatabaseFile = new File("temp_" + this.databaseFile.getName());
+       // Delete from CSV:
        // TODO: Move to thread
+        modifyLineInAFile(this.databaseFile, moduleRow, "delete", null);    
+    }
+
+    void modifyLineInAFile(File file, int lineNumber, String action, String substituteLine) {
+       File tempFile = new File("temp_" + file.getName());
         BufferedReader br = null;
         BufferedWriter bw = null;
         try {
-            br = new BufferedReader(new FileReader(this.databaseFile));
-            bw = new BufferedWriter(new FileWriter(tempDatabaseFile));
+            br = new BufferedReader(new FileReader(file));
+            bw = new BufferedWriter(new FileWriter(tempFile));
             
             String line;
             int i = -1;
             while ((line = br.readLine()) != null) {
                 i++;
-                if (i == moduleRow) continue;
+                if (i == lineNumber) {
+                    if (action == "delete") continue;
+                    if (action == "update") line = substituteLine;
+                }
                 bw.write(line+"\n");
             }
         } catch (Exception e) {
@@ -215,14 +187,16 @@ class ModuleApp {
                    bw.close();
             } catch (IOException e) {}
         }
-
-        ModuleAppHelper.replaceFile(this.databaseFile, tempDatabaseFile);
+        ModuleAppHelper.replaceFile(file, tempFile);
     }
 
 
-    void createModule(String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) throws DuplicateModuleException {
+
+
+
+    void createModule(String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) throws DuplicateModuleException, InvalidModuleFormatException, EmptyValueException {
         verifyNotDuplicate(newModuleCode);
-        // TODO: Validate (format + nonEmptyness) & Check for duplicates
+        // Expand database:
         Module[] newDB = new Module[this.db.length+1];         // add to databaseArray:
         for (int i=0; i<this.db.length; i++) {                 // Copy old database into the new
             newDB[i] = this.db[i];
@@ -235,13 +209,7 @@ class ModuleApp {
     }
 
 
-    void verifyNotDuplicate(String moduleCode) throws DuplicateModuleException {
-        for (Module module : this.db) {
-            if (module.getCode().equals(moduleCode)){
-                throw new DuplicateModuleException();
-            }
-        }
-    }
+    
 
 
     // Getters
@@ -249,6 +217,13 @@ class ModuleApp {
     Module[] getDb() { return this.db; }
     Module getModule(int moduleRow) { return this.db[moduleRow]; }
  
-    
+    // Helpers
+    void verifyNotDuplicate(String moduleCode) throws DuplicateModuleException {
+        for (Module module : this.db) {
+            if (module.getCode().equals(moduleCode)){
+                throw new DuplicateModuleException();
+            }
+        }
+    }
 
 }
