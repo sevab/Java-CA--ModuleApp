@@ -274,38 +274,7 @@ public class ModuleAppTest {
         ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
     }
 
-    // @Test
-    // public void shouldThrowAnInvalidModuleFormatException() throws FileNotFoundException, IOException{
-    //     ModuleApp test = new ModuleApp();
-    //     test.loadCSVFile(this.test_csv_file);
-    //     try {                // invalid module code
-    //         test.createModule("ECM140","Programming","Jonathan Fieldsend","J.E.Fieldsend@exeter.ac.uk");
-    //         fail( "Missing exception" );
-    //     } catch (InvalidModuleFormatException e){}
-    //     try {                // empty module code
-    //         test.createModule("","Programming","Jonathan Fieldsend","J.E.Fieldsend@exeter.ac.uk");
-    //         fail( "Missing exception" );
-    //     } catch (InvalidModuleFormatException e){}
-    //     try {                // empty module title
-    //         test.createModule("ECM1401","","Jonathan Fieldsend","J.E.Fieldsend@exeter.ac.uk");
-    //         fail( "Missing exception" );
-    //     } catch (InvalidModuleFormatException e){}
-    //     try {                // empty module leader name
-    //         test.createModule("ECM1401","Programming","","J.E.Fieldsend@exeter.ac.uk");
-    //         fail( "Missing exception" );
-    //     } catch (InvalidModuleFormatException e){}
-    //     try {                // invalid email
-    //         test.createModule("ECM1401","Programming","Jonathan Fieldsend","J.E.Fieldsend@");
-    //         fail( "Missing exception" );
-    //     } catch (InvalidModuleFormatException e){}
-
-    //     ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
-    // }
-
-    // @Test
-    // public void testCannotAddDuplicates() throws FileNotFoundException, IOException {}
-
-
+    
     // @Test
     // public void testSearchByModuleLeaderEmailCornerCases() throws FileNotFoundException, IOException {
     //     ModuleApp test = new ModuleApp();

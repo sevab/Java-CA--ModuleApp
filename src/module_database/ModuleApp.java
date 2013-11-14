@@ -181,10 +181,6 @@ class ModuleApp {
         ModuleAppHelper.replaceFile(file, tempFile);
     }
 
-
-
-
-
     void createModule(String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) throws DuplicateModuleException, InvalidModuleFormatException, EmptyValueException {
         verifyNotDuplicate(newModuleCode);
         // Expand database:
@@ -200,11 +196,7 @@ class ModuleApp {
     }
 
 
-    
-
-
     // Getters
-    // private boolean notDuplicate(String moduleCode) {}
     Module[] getDb() { return this.db; }
     Module getModule(int moduleRow) { return this.db[moduleRow]; }
  
