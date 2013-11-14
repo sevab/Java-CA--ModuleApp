@@ -76,6 +76,44 @@ public class ModuleAppHelper {
     }
 
 
+    static void modifyLineInAFile(File file, int lineNumber, String action, String substituteLine) {
+       File tempFile = new File("temp_" + file.getName());
+        BufferedReader br = null;
+        BufferedWriter bw = null;
+        try {
+            br = new BufferedReader(new FileReader(file));
+            bw = new BufferedWriter(new FileWriter(tempFile));
+            
+            String line;
+            int i = -1;
+            while ((line = br.readLine()) != null) {
+                i++;
+                if (i == lineNumber) {
+                    if (action == "delete") continue;
+                    if (action == "update") line = substituteLine;
+                }
+                bw.write(line+"\n");
+            }
+        } catch (Exception e) {
+            return;
+        } finally {
+            try {
+                if(br != null)
+                   br.close();
+            } catch (IOException e) {}
+
+            try {
+                if(bw != null)
+                   bw.close();
+            } catch (IOException e) {}
+        }
+        ModuleAppHelper.replaceFile(file, tempFile);
+    }
+
+
+
+
+
    // To be used by the test suite to restore the database back to its original state after modification
     static void restoreDatabaseFileFromBackUp(String backupFilePath, String destinationFilePath) throws IOException {
         File backupFile = new File(backupFilePath);

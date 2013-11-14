@@ -38,6 +38,7 @@ class ModuleApp {
     // TODO: normalize all queries by upcasing; normalize results as well?
     // TODO: Expand database if reached the limit (keep on adding until an exception is thrown?)
     void loadCSVFile(String databaseFileDirectory) throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException {
+        // create an array as large as there're numbers in a csv file
         this.db = new Module[ModuleAppHelper.linesInAFile(databaseFileDirectory)];
         this.databaseFile = new File(databaseFileDirectory);
         BufferedReader reader = new BufferedReader(new FileReader(databaseFile));
@@ -128,10 +129,11 @@ class ModuleApp {
         // update the CSV file
         // TODO: Move to thread
         String substituteLine = "\""+newModuleCode+"\",\""+ newModuleTitle +"\",\""+ newModuleLeaderName +"\",\""+newModuleLeaderEmail+"\"";
-        modifyLineInAFile(this.databaseFile, moduleRow, "update", substituteLine);
+        ModuleAppHelper.modifyLineInAFile(this.databaseFile, moduleRow, "update", substituteLine);
     }
 
     void deleteModule(int moduleRow) {
+        // TODO: throw an exception if nothing's found?
         // delete from the database Array first
         Module[] newDB = new Module[this.db.length-1];
         int j = 0;
@@ -144,41 +146,7 @@ class ModuleApp {
 
        // Delete from CSV:
        // TODO: Move to thread
-        modifyLineInAFile(this.databaseFile, moduleRow, "delete", null);    
-    }
-
-    void modifyLineInAFile(File file, int lineNumber, String action, String substituteLine) {
-       File tempFile = new File("temp_" + file.getName());
-        BufferedReader br = null;
-        BufferedWriter bw = null;
-        try {
-            br = new BufferedReader(new FileReader(file));
-            bw = new BufferedWriter(new FileWriter(tempFile));
-            
-            String line;
-            int i = -1;
-            while ((line = br.readLine()) != null) {
-                i++;
-                if (i == lineNumber) {
-                    if (action == "delete") continue;
-                    if (action == "update") line = substituteLine;
-                }
-                bw.write(line+"\n");
-            }
-        } catch (Exception e) {
-            return;
-        } finally {
-            try {
-                if(br != null)
-                   br.close();
-            } catch (IOException e) {}
-
-            try {
-                if(bw != null)
-                   bw.close();
-            } catch (IOException e) {}
-        }
-        ModuleAppHelper.replaceFile(file, tempFile);
+        ModuleAppHelper.modifyLineInAFile(this.databaseFile, moduleRow, "delete", null);    
     }
 
     void createModule(String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) throws DuplicateModuleException, InvalidModuleFormatException, EmptyValueException {
