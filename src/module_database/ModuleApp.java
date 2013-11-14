@@ -36,7 +36,6 @@ class ModuleApp {
     }
 
     // TODO: normalize all queries by upcasing; normalize results as well?
-    // TODO: Expand database if reached the limit (keep on adding until an exception is thrown?)
     void loadCSVFile(String databaseFileDirectory) throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException {
         // create an array as large as there're numbers in a csv file
         this.db = new Module[ModuleAppHelper.linesInAFile(databaseFileDirectory)];
@@ -88,16 +87,17 @@ class ModuleApp {
     	return ModuleAppHelper.convertStringToIntArray(resultRows);
     }
 
+
     int[] findModuleRowsByLeader(String method, String query) {
         // if (moduleLeaderEmailQuery.length() == 0) return new int[]{-1};
-        // if method else, throw some sort of exception? or turn methods into enums
+        // if method is smth else, throw some sort of exception? or turn methods into enums
         String resultRows = ""; // if nothing's found, assign an empty array.
         Pattern pattern = Pattern.compile(query);
         Matcher moduleLeaderMatcher = null;
         for (int i=0; i < this.db.length ; i++) {
-            if (method == "name")
+            if (method.equals("name"))
                 moduleLeaderMatcher = pattern.matcher(getModule(i).getLeaderName());
-            if (method == "email")
+            if (method.equals("email"))
                 moduleLeaderMatcher = pattern.matcher(getModule(i).getLeaderEmail());
             if (moduleLeaderMatcher.lookingAt())
                 resultRows = resultRows + i + ",";
@@ -109,7 +109,6 @@ class ModuleApp {
         // TODO: extract into to private methods updateDatabaseArray & updateDatabaseCSV, then call both in here after validating values
 
         File tempDatabaseFile = new File("temp_" + this.databaseFile.getName());
-
         // update the database array
         // FIXME: shall we perform this after updating CSV file in case of errors? But errors should be caught.
 
@@ -146,7 +145,7 @@ class ModuleApp {
 
        // Delete from CSV:
        // TODO: Move to thread
-        ModuleAppHelper.modifyLineInAFile(this.databaseFile, moduleRow, "delete", null);    
+        ModuleAppHelper.modifyLineInAFile(this.databaseFile, moduleRow, "delete", null);
     }
 
     void createModule(String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) throws DuplicateModuleException, InvalidModuleFormatException, EmptyValueException {
