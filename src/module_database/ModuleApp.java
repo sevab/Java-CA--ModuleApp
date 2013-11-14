@@ -87,30 +87,21 @@ class ModuleApp {
     	return ModuleAppHelper.convertStringToIntArray(resultRows);
     }
 
-    int[] findModuleRowsByLeaderName(String moduleLeaderNameQuery) {
-    	// if (moduleLeaderNameQuery.length() == 0) return new int[]{-1};
-
-    	String resultRows = ""; // if nothing's found, assign an empty array.
-    	Pattern moduleLeaderNameRegex = Pattern.compile(moduleLeaderNameQuery);
-    	for (int i=0; i < this.db.length ; i++) {
-    		Matcher moduleLeaderNameMatcher = moduleLeaderNameRegex.matcher(getModule(i).getLeaderName());
-    		if (moduleLeaderNameMatcher.lookingAt())
-    			resultRows = resultRows + i + ",";
-    	}
-    	return ModuleAppHelper.convertStringToIntArray(resultRows);
-    }
-
-    int[] findModuleRowsByLeaderEmail(String moduleLeaderEmailQuery) {
-    	// if (moduleLeaderEmailQuery.length() == 0) return new int[]{-1};
-
-    	String resultRows = ""; // if nothing's found, assign an empty array.
-    	Pattern moduleLeaderEmailRegex = Pattern.compile(moduleLeaderEmailQuery);
-    	for (int i=0; i < this.db.length ; i++) {
-    		Matcher moduleLeaderEmailMatcher = moduleLeaderEmailRegex.matcher(getModule(i).getLeaderEmail());
-    		if (moduleLeaderEmailMatcher.lookingAt())
-    			resultRows = resultRows + i + ",";
-    	}
-    	return ModuleAppHelper.convertStringToIntArray(resultRows);
+    int[] findModuleRowsByLeader(String method, String query) {
+        // if (moduleLeaderEmailQuery.length() == 0) return new int[]{-1};
+        // if method else, throw some sort of exception? or turn methods into enums
+        String resultRows = ""; // if nothing's found, assign an empty array.
+        Pattern pattern = Pattern.compile(query);
+        Matcher moduleLeaderMatcher = null;
+        for (int i=0; i < this.db.length ; i++) {
+            if (method == "name")
+                moduleLeaderMatcher = pattern.matcher(getModule(i).getLeaderName());
+            if (method == "email")
+                moduleLeaderMatcher = pattern.matcher(getModule(i).getLeaderEmail());
+            if (moduleLeaderMatcher.lookingAt())
+                resultRows = resultRows + i + ",";
+        }
+        return ModuleAppHelper.convertStringToIntArray(resultRows);
     }
 
     void updateModule(int moduleRow, String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) throws InvalidModuleFormatException, EmptyValueException, DuplicateModuleException {

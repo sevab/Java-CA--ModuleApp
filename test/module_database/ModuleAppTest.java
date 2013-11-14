@@ -104,7 +104,7 @@ public class ModuleAppTest {
         for (int i=0; i<4; i++) {
             String moduleLeaderNameQuery = testQueries[i];
             int[] expectedSearchResult = expectedSearchResults[i];
-            int[] actualSearchResult = test.findModuleRowsByLeaderName(moduleLeaderNameQuery);
+            int[] actualSearchResult = test.findModuleRowsByLeader("name", moduleLeaderNameQuery);
             
 
             // System.out.println(actualSearchResult + " " + moduleCodeQuery + " " + expectedSearchResults[i]);
@@ -126,7 +126,7 @@ public class ModuleAppTest {
         for (int i=0; i<4; i++) {
             String moduleLeaderEmailQuery = testQueries[i];
             int[] expectedSearchResult = expectedSearchResults[i];
-            int[] actualSearchResult = test.findModuleRowsByLeaderEmail(moduleLeaderEmailQuery);
+            int[] actualSearchResult = test.findModuleRowsByLeader("email", moduleLeaderEmailQuery);
             
 
             // System.out.println(actualSearchResult + " " + moduleCodeQuery + " " + expectedSearchResults[i]);
