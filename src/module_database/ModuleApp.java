@@ -24,16 +24,10 @@ import java.util.regex.Pattern;
  * @author sevabaskin
  */
 class ModuleApp {
-    private Pattern csvRegex;
-	private Pattern moduleYearRegex;
     private File databaseFile;
     private Module[] db;
 
-    ModuleApp() {
-    	// Move to the specific methods if not used in multiple places:
-    	this.csvRegex = Pattern.compile("\"(.*?)\"");
-		this.moduleYearRegex = Pattern.compile("(?<=^...)(1|2|3|M|m)");
-    }
+    ModuleApp() {    }
 
     // TODO: normalize all queries by upcasing; normalize results as well?
     void loadCSVFile(String databaseFileDirectory) throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException {
@@ -43,6 +37,7 @@ class ModuleApp {
         BufferedReader reader = new BufferedReader(new FileReader(databaseFile));
         String line;
         int i = 0;
+        Pattern csvRegex = Pattern.compile("\"(.*?)\"");
 		while ((line = reader.readLine()) != null) {
 			// #OPTIMIZE
             Matcher csvMatcher = csvRegex.matcher(line);
@@ -75,7 +70,7 @@ class ModuleApp {
     // JavaDoc: Describe how strings are used to generte dynamyc-length arrays
     int[] findModuleRowsByYear(String moduleYearQuery) {
     	// if (moduleYearQuery.length() == 0) return new int[]{-1};
-
+        Pattern moduleYearRegex = Pattern.compile("(?<=^...)(1|2|3|M|m)");
     	String resultRows = ""; // if nothing's found, assign an empty array.
     	for (int i=0; i < this.db.length ; i++) {
     		Matcher moduleYearMatcher = moduleYearRegex.matcher(getModule(i).getCode());

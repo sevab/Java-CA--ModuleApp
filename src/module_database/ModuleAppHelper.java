@@ -20,7 +20,7 @@ import java.nio.channels.FileChannel;
  * @author sevabaskin
  */
 public class ModuleAppHelper {
-
+    // TODO: split into ModuleUtils & ModuleFileHandler classes?
 
 	static void appendLineToFile(File file, String line) {
         // maybe should return a boolean if successful
