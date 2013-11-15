@@ -1,10 +1,10 @@
 /** TODO: currently the use of other methods requires calling loadCSV file; so, either
 *         a) throw an error message if loadCSVFile() isn't called first or 
-*         b) combine ModuleApp() with loadCSVFile()
+*         b) combine ModuleDatabase() with loadCSVFile()
 *
 *   TODO: when doing threading, warn user if he tries to quit the app while a tread hasn't finished writing to a file
 *   TODO: decide on uniform variable names (e.g. newModuleTitle vs newTitle)
-*   TODO: shall we return Module[] arrays instead of integer arrays? also, how about renaming findModuleRowByTitle to findByTitle, ModuleApp can then be renamed into ModulesDatabase
+*   TODO: shall we return Module[] arrays instead of integer arrays? also, how about renaming findModuleRowByTitle to findByTitle, ModuleDatabase can then be renamed into ModulesDatabase
 */
 
 package module_database;
@@ -23,11 +23,11 @@ import java.util.regex.Pattern;
  *
  * @author sevabaskin
  */
-class ModuleApp {
+class ModuleDatabase {
     private File databaseFile;
     private Module[] db;
 
-    ModuleApp() {    }
+    ModuleDatabase() {    }
 
     // TODO: normalize all queries by upcasing; normalize results as well?
     synchronized void loadCSVFile(String databaseFileDirectory) throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException {
