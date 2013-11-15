@@ -161,6 +161,11 @@ public class ModuleAppTest {
 
         test.updateModule(1, "ECMM999", "Test Name", "Test Name", "test@exeter.ac.uk");
         
+        try { // wait 0.1sec before checking that the line in the file has been updated
+            Thread.sleep(100);
+        } catch( InterruptedException e) {
+            fail("Exception should not be thrown");
+        }
         // After Update:
         String[] expectedArrayTwo = {"ECMM999", "Test Name", "Test Name", "test@exeter.ac.uk"};
         String[] actualArrayTwo = test.getModule(1).getFullInfo();
@@ -173,7 +178,7 @@ public class ModuleAppTest {
     }
 
     @Test
-    public void testModuleDelete() throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException {
+    public void testModuleDelete() throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException, InterruptedException {
         ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
         ModuleApp test = new ModuleApp();
         test.loadCSVFile(this.test_csv_file);
@@ -185,9 +190,13 @@ public class ModuleAppTest {
         String[] expectedArray = {"ECM1402","Computer Systems","Zena Wood","Z.M.Wood@exeter.ac.uk"};
         String[] actualArray = test.getModule(1).getFullInfo();
         Assert.assertArrayEquals(expectedArray, actualArray);
-
-        test.deleteModule(1);
-
+        
+        test.deleteModule(1);        
+        try { // wait 0.1sec before checking that the line in the file has been deleted
+            Thread.sleep(100);
+        } catch( InterruptedException e) {
+            fail("Exception should not be thrown");
+        }
         // After Update:
         expectedLine = "\"ECM1406\",\"Data Structures and Team Project\",\"Zena Wood\",\"Z.M.Wood@exeter.ac.uk\"";
         actualLine = ModuleAppHelper.getCsvLine(this.test_csv_file, 1);
@@ -220,7 +229,11 @@ public class ModuleAppTest {
         } catch (ArrayIndexOutOfBoundsException e) {}
 
         test.createModule("ECM3999", "Test Name", "Test Name", "test@ex.ac.uk");
-
+        try { // wait 1sec before checking that the line has been added to the file
+            Thread.sleep(100);
+        } catch( InterruptedException e) {
+            fail("Exception should not be thrown");
+        }
         // After Create:
         String[] expectedArrayTwo = {"ECM3999", "Test Name", "Test Name", "test@ex.ac.uk"};
         String[] actualArrayTwo = test.getModule(60).getFullInfo();
@@ -274,7 +287,9 @@ public class ModuleAppTest {
         ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
     }
 
-    
+    // !!! Test deleteing, updating and creating in one test to make sure the threading is synchronized and methods don't get into each other's way
+    // may need to do the wait & notify thing to make sure one thread starts reading file before the other one stoped writing. Though shouldn't happen since synchronized
+
     // @Test
     // public void testSearchByModuleLeaderEmailCornerCases() throws FileNotFoundException, IOException {
     //     ModuleApp test = new ModuleApp();

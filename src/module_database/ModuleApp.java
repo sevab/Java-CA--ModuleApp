@@ -30,7 +30,7 @@ class ModuleApp {
     ModuleApp() {    }
 
     // TODO: normalize all queries by upcasing; normalize results as well?
-    void loadCSVFile(String databaseFileDirectory) throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException {
+    synchronized void loadCSVFile(String databaseFileDirectory) throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException {
         // create an array as large as there're numbers in a csv file
         this.db = new Module[ModuleAppHelper.linesInAFile(databaseFileDirectory)];
         this.databaseFile = new File(databaseFileDirectory);
@@ -100,7 +100,7 @@ class ModuleApp {
         return ModuleAppHelper.convertStringToIntArray(resultRows);
     }
 
-    void updateModule(int moduleRow, String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) throws InvalidModuleFormatException, EmptyValueException, DuplicateModuleException {
+    synchronized void updateModule(final int moduleRow, String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) throws InvalidModuleFormatException, EmptyValueException, DuplicateModuleException {
         // TODO: extract into to private methods updateDatabaseArray & updateDatabaseCSV, then call both in here after validating values
 
         File tempDatabaseFile = new File("temp_" + this.databaseFile.getName());
@@ -122,11 +122,21 @@ class ModuleApp {
 
         // update the CSV file
         // TODO: Move to thread
-        String substituteLine = "\""+newModuleCode+"\",\""+ newModuleTitle +"\",\""+ newModuleLeaderName +"\",\""+newModuleLeaderEmail+"\"";
-        ModuleAppHelper.modifyLineInAFile(this.databaseFile, moduleRow, "update", substituteLine);
+        final String substituteLine = "\""+newModuleCode+"\",\""+ newModuleTitle +"\",\""+ newModuleLeaderName +"\",\""+newModuleLeaderEmail+"\"";
+        
+        new Thread() {
+            public void run() {
+                ModuleAppHelper.modifyLineInAFile(databaseFile, moduleRow, "update", substituteLine);
+                // Catch InterruptedException? "File-writing has been inturrupted. The database csv file may be corrupt."
+                // No. Just ship, handle later.
+            }
+        }.start();
+
+        // ModuleAppHelper.modifyLineInAFile(this.databaseFile, moduleRow, "update", substituteLine);
+
     }
 
-    void deleteModule(int moduleRow) {
+    synchronized void deleteModule(final int moduleRow) {
         // TODO: throw an exception if nothing's found?
         // delete from the database Array first
         Module[] newDB = new Module[this.db.length-1];
@@ -140,10 +150,15 @@ class ModuleApp {
 
        // Delete from CSV:
        // TODO: Move to thread
-        ModuleAppHelper.modifyLineInAFile(this.databaseFile, moduleRow, "delete", null);
+        new Thread() {
+            public void run() {
+                ModuleAppHelper.modifyLineInAFile(databaseFile, moduleRow, "delete", null);
+            }
+        }.start();
+        // ModuleAppHelper.modifyLineInAFile(databaseFile, moduleRow, "delete", null);
     }
 
-    void createModule(String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) throws DuplicateModuleException, InvalidModuleFormatException, EmptyValueException {
+    synchronized void createModule(String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) throws DuplicateModuleException, InvalidModuleFormatException, EmptyValueException {
         verifyNotDuplicate(newModuleCode);
         // Expand database:
         Module[] newDB = new Module[this.db.length+1];         // add to databaseArray:
@@ -153,8 +168,13 @@ class ModuleApp {
         newDB[newDB.length-1] = new Module(newModuleCode, newModuleTitle, newModuleLeaderName, newModuleLeaderEmail);         // Add new module to the new database
         this.db = newDB;         // reasign new database to the global database
 
-        String line = "\""+newModuleCode+"\",\""+ newModuleTitle +"\",\""+newModuleLeaderName+"\",\""+newModuleLeaderEmail+"\"";
-        ModuleAppHelper.appendLineToFile(this.databaseFile, line); // append line to the databaseCSVfile
+        final String line = "\""+newModuleCode+"\",\""+ newModuleTitle +"\",\""+newModuleLeaderName+"\",\""+newModuleLeaderEmail+"\"";
+        
+        new Thread() {
+            public void run() {
+                ModuleAppHelper.appendLineToFile(databaseFile, line); // append line to the databaseCSVfile
+            }
+        }.start();
     }
 
 
