@@ -55,39 +55,42 @@ public class ModuleDatabaseTest {
 
     @Test
     public void testSearchByModuleCode() throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException {
-        String[] testQueries = {"ECM1401", "ECM1406", "ECM1407", "ECM3412", "NSCM002", "Non-existent module"};
-        int[] expectedSearchResults = { 0, 2, 3, 27, 59, -1};
+        String[] testQueries = {"ECM1401", "ECM1406", "ECM1407", "ECM3412", "NSCM002"};
+        String[] expectedSearchResults = { "ECM1401", "ECM1406", "ECM1407", "ECM3412", "NSCM002"};
 
         ModulesDatabase test = new ModulesDatabase();
         test.loadCSVFile(this.test_csv_file);
 
-        int i = 0;
-        for (String moduleCodeQuery : testQueries) {
-            int actualSearchResult = test.findModuleRowByCode(moduleCodeQuery);
+        for (int i=0; i < testQueries.length; i++) {
+            
+            Module[] actualSearchResult = test.findModuleRowByCode(testQueries[i]);
             // System.out.println(actualSearchResult + " " + moduleCodeQuery + " " + expectedSearchResults[i]);
-            Assert.assertEquals(expectedSearchResults[i], actualSearchResult);
-            i++;
+            Assert.assertEquals(expectedSearchResults[i], actualSearchResult[0].getCode());
         }
+
+        // An empty array is returned when no results matched
+        Assert.assertEquals(new Module[]{}, test.findModuleRowByCode("Non-existent module"));
     }
 
     @Test
     public void testSearchByModuleYear() throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException {
         String[] testQueries = {"1", "2", "3", "M"};
-        int[][] expectedSearchResults = { {0,1,2}, {10,11,12}, {21,22,23}, {33,34,35}};
+        String[][] expectedSearchResults = { {"ECM1401","ECM1402","ECM1406"}, {"ECM2407","ECM2408","ECM2410"}, {"ECM3401","ECM3402","ECM3403"}, {"ECMM412","ECMM401","ECMM403"}};
 
         ModulesDatabase test = new ModulesDatabase();
         test.loadCSVFile(this.test_csv_file);
 
         // Loop over test queries
         for (int i=0; i<4; i++) {
+
             String moduleYearQuery = testQueries[i];
-            int[] expectedSearchResult = expectedSearchResults[i];
-            int[] actualSearchResult = test.findModuleRowsByYear(moduleYearQuery);
-            
+            String[] expectedSearchResult = expectedSearchResults[i];
+            Module[] actualSearchResult = test.findModuleRowsByYear(moduleYearQuery);
+            // System.out.println(test.findModuleRowsByYear("2")[1].getCode());
 
             // System.out.println(actualSearchResult + " " + moduleCodeQuery + " " + expectedSearchResults[i]);
             for (int j=0; j<3; j++) {
-                Assert.assertEquals(expectedSearchResult[j], actualSearchResult[j]);  
+                Assert.assertEquals(expectedSearchResult[j], actualSearchResult[j].getCode());  
             }
         }
     }
@@ -95,7 +98,7 @@ public class ModuleDatabaseTest {
     @Test
     public void testSearchByModuleLeaderName() throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException {
         String[] testQueries = {"Antony Galton", "Antony Galt", "Antony", "Ant"};
-        int[][] expectedSearchResults = {{19,21,25,28,31}, {19,21,25,28,31}, {19,21,25,28,31}, {19,21,25,28,31}};
+        String[][] expectedSearchResults = {{"ECM2417","ECM3401","ECM3410","ECM3416","ECM3421"}, {"ECM2417","ECM3401","ECM3410","ECM3416","ECM3421"}, {"ECM2417","ECM3401","ECM3410","ECM3416","ECM3421"}, {"ECM2417","ECM3401","ECM3410","ECM3416","ECM3421"}};
 
         ModulesDatabase test = new ModulesDatabase();
         test.loadCSVFile(this.test_csv_file);
@@ -103,13 +106,13 @@ public class ModuleDatabaseTest {
         // Loop over test queries
         for (int i=0; i<4; i++) {
             String moduleLeaderNameQuery = testQueries[i];
-            int[] expectedSearchResult = expectedSearchResults[i];
-            int[] actualSearchResult = test.findModuleRowsByLeader("name", moduleLeaderNameQuery);
+            String[] expectedSearchResult = expectedSearchResults[i];
+            Module[] actualSearchResult = test.findModuleRowsByLeader("name", moduleLeaderNameQuery);
             
 
             // System.out.println(actualSearchResult + " " + moduleCodeQuery + " " + expectedSearchResults[i]);
             for (int j=0; j<5; j++) {
-                Assert.assertEquals(expectedSearchResult[j], actualSearchResult[j]);  
+                Assert.assertEquals(expectedSearchResult[j], actualSearchResult[j].getCode());  
             }
         }
     }
@@ -117,7 +120,7 @@ public class ModuleDatabaseTest {
     @Test
     public void testSearchByModuleLeaderEmail() throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException {
         String[] testQueries = {"A.P.Galton@ex.ac.uk", "A.P.Galton@ex.ac.", "A.P.Ga", "A.P"};
-        int[][] expectedSearchResults = {{19,21,25,28,31}, {19,21,25,28,31}, {19,21,25,28,31}, {19,21,25,28,31}};
+        String[][] expectedSearchResults = {{"ECM2417","ECM3401","ECM3410","ECM3416","ECM3421"}, {"ECM2417","ECM3401","ECM3410","ECM3416","ECM3421"}, {"ECM2417","ECM3401","ECM3410","ECM3416","ECM3421"}, {"ECM2417","ECM3401","ECM3410","ECM3416","ECM3421"}};
 
         ModulesDatabase test = new ModulesDatabase();
         test.loadCSVFile(this.test_csv_file);
@@ -125,13 +128,13 @@ public class ModuleDatabaseTest {
         // Loop over test queries
         for (int i=0; i<4; i++) {
             String moduleLeaderEmailQuery = testQueries[i];
-            int[] expectedSearchResult = expectedSearchResults[i];
-            int[] actualSearchResult = test.findModuleRowsByLeader("email", moduleLeaderEmailQuery);
+            String[] expectedSearchResult = expectedSearchResults[i];
+            Module[] actualSearchResult = test.findModuleRowsByLeader("email", moduleLeaderEmailQuery);
             
 
             // System.out.println(actualSearchResult + " " + moduleCodeQuery + " " + expectedSearchResults[i]);
             for (int j=0; j<5; j++) {
-                Assert.assertEquals(expectedSearchResult[j], actualSearchResult[j]);  
+                Assert.assertEquals(expectedSearchResult[j], actualSearchResult[j].getCode());  
             }
         }
     }

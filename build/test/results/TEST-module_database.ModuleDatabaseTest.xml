@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="0" hostname="Sevas-MacBook-Air.local" name="module_database.ModuleDatabaseTest" tests="11" time="0.753" timestamp="2013-11-16T19:12:46">
+<testsuite errors="0" failures="0" hostname="Sevas-MacBook-Air.local" name="module_database.ModuleDatabaseTest" tests="11" time="0.595" timestamp="2013-11-16T23:26:30">
   <properties>
-    <property name="default.javac.source" value="1.4" />
+    <property name="default.javac.source" value="1.7" />
     <property name="file.encoding.pkg" value="sun.io" />
     <property name="ant.file.type.Coursework_1-impl" value="file" />
     <property name="javac.source" value="1.7" />
@@ -74,7 +74,7 @@
     <property name="libs.JAXB-ENDORSED.src" value="" />
     <property name="libs.hibernate-persistence.javadoc" value="" />
     <property name="libs.ejb3-persistence.classpath" value="/Applications/NetBeans/NetBeans 7.4.app/Contents/Resources/NetBeans/java/modules/ext/hibernate/hibernate-jpa-2.0-api-1.0.1.Final.jar" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner module_database.ModuleDatabaseTest filtertrace=true haltOnError=false haltOnFailure=false showoutput=true outputtoformatters=true logfailedtests=true logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/test/results/TEST-module_database.ModuleDatabaseTest.xml crashfile=/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/junitvmwatcher8648460239607958277.properties propsfile=/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/junit9181091302318336453.properties" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner module_database.ModuleDatabaseTest filtertrace=true haltOnError=false haltOnFailure=false showoutput=true outputtoformatters=true logfailedtests=true logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/test/results/TEST-module_database.ModuleDatabaseTest.xml crashfile=/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/junitvmwatcher3915487801747948380.properties propsfile=/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/junit16303670670970673.properties" />
     <property name="built-jar.properties" value="/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build/built-jar.properties" />
     <property name="ant.file.Coursework_1" value="/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/build.xml" />
     <property name="libs.junit.src" value="" />
@@ -251,7 +251,7 @@
     <property name="libs.jaxws21.javadoc" value="/Applications/NetBeans/NetBeans 7.4.app/Contents/Resources/NetBeans/java/docs/jaxws-api-doc.zip" />
     <property name="javadoc.additionalparam" value="" />
     <property name="javac.classpath" value="" />
-    <property name="default.javac.target" value="1.4" />
+    <property name="default.javac.target" value="1.7" />
     <property name="build.classes.dir" value="build/classes" />
     <property name="libs.swing-layout.javadoc" value="/Applications/NetBeans/NetBeans 7.4.app/Contents/Resources/NetBeans/platform/docs/swing-layout-1.0.4-doc.zip" />
     <property name="libs.swing-layout.src" value="/Applications/NetBeans/NetBeans 7.4.app/Contents/Resources/NetBeans/platform/docs/swing-layout-1.0.4-src.zip" />
@@ -264,17 +264,17 @@
     <property name="sun.arch.data.model" value="64" />
     <property name="mkdist.disabled" value="true" />
   </properties>
-  <testcase classname="module_database.ModuleDatabaseTest" name="testColumnData" time="0.029" />
-  <testcase classname="module_database.ModuleDatabaseTest" name="testSearchByModuleCode" time="0.019" />
-  <testcase classname="module_database.ModuleDatabaseTest" name="testSearchByModuleYear" time="0.016" />
-  <testcase classname="module_database.ModuleDatabaseTest" name="testSearchByModuleLeaderName" time="0.013" />
-  <testcase classname="module_database.ModuleDatabaseTest" name="testSearchByModuleLeaderEmail" time="0.014" />
+  <testcase classname="module_database.ModuleDatabaseTest" name="testColumnData" time="0.041" />
+  <testcase classname="module_database.ModuleDatabaseTest" name="testSearchByModuleCode" time="0.027" />
+  <testcase classname="module_database.ModuleDatabaseTest" name="testSearchByModuleYear" time="0.027" />
+  <testcase classname="module_database.ModuleDatabaseTest" name="testSearchByModuleLeaderName" time="0.023" />
+  <testcase classname="module_database.ModuleDatabaseTest" name="testSearchByModuleLeaderEmail" time="0.023" />
   <testcase classname="module_database.ModuleDatabaseTest" name="testGetCsvLine" time="0.0" />
-  <testcase classname="module_database.ModuleDatabaseTest" name="testModuleUpdate" time="0.123" />
+  <testcase classname="module_database.ModuleDatabaseTest" name="testModuleUpdate" time="0.129" />
   <testcase classname="module_database.ModuleDatabaseTest" name="testModuleDelete" time="0.108" />
-  <testcase classname="module_database.ModuleDatabaseTest" name="testModuleCreate" time="0.108" />
-  <testcase classname="module_database.ModuleDatabaseTest" name="shouldThrowADuplicateExceptionWhenAddingADuplicate" time="0.006" />
-  <testcase classname="module_database.ModuleDatabaseTest" name="shouldNotUpdateModuleWithDuplicateValues" time="0.006" />
+  <testcase classname="module_database.ModuleDatabaseTest" name="testModuleCreate" time="0.107" />
+  <testcase classname="module_database.ModuleDatabaseTest" name="shouldThrowADuplicateExceptionWhenAddingADuplicate" time="0.005" />
+  <testcase classname="module_database.ModuleDatabaseTest" name="shouldNotUpdateModuleWithDuplicateValues" time="0.005" />
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

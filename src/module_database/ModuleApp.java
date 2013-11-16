@@ -24,14 +24,6 @@ public class ModuleApp {
     }
 
 
-
-
-
-
-
-
-
-
     static void selectMainOption() throws IOException {
 		printMainOptions();
 		try {
@@ -119,7 +111,17 @@ public class ModuleApp {
 
     }
 
-    static void searchByCode(){}
+    static void searchByCode(){
+  //   	try {
+		// 	System.out.print("Enter the exact module code: ");		
+		//     String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
+	 //    	findModuleRowByCode(userInput);
+	 //    	}
+		// } catch (IOException ioe) {
+		// 	System.out.println("Oops..somethign went wrong."); System.exit(1);
+		// }
+
+    }
     static void searchByYear(){}
     static void searchByName(){}
     static void searchByEmail(){}

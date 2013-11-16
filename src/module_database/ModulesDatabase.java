@@ -57,19 +57,20 @@ class ModulesDatabase {
     }
 
 
-    int findModuleRowByCode(String moduleCodeQuery) {
-        int resultRow = -1;
+    Module[] findModuleRowByCode(String moduleCodeQuery) {
+        Module[] resultRow = {};
         for (int i=0; i < this.db.length ; i++) {
             if (getModule(i).getCode().equals(moduleCodeQuery)) {
-                resultRow = i;
+                resultRow = new Module[]{getModule(i)};
                 break;
             }
         }
         return resultRow;
+
     }
 
     // JavaDoc: Describe how strings are used to generte dynamyc-length arrays
-    int[] findModuleRowsByYear(String moduleYearQuery) {
+    Module[] findModuleRowsByYear(String moduleYearQuery) {
         // if (moduleYearQuery.length() == 0) return new int[]{-1};
         Pattern moduleYearRegex = Pattern.compile("(?<=^...)(1|2|3|M|m)");
         String resultRows = ""; // if nothing's found, assign an empty array.
@@ -80,11 +81,11 @@ class ModulesDatabase {
             if (candidateResult.equals(moduleYearQuery))
                 resultRows = resultRows + i + ",";
         }
-        return ModuleAppHelper.convertStringToIntArray(resultRows);
+        return getModulesByID(ModuleAppHelper.convertStringToIntArray(resultRows));
     }
 
 
-    int[] findModuleRowsByLeader(String method, String query) {
+    Module[] findModuleRowsByLeader(String method, String query) {
         // if (moduleLeaderEmailQuery.length() == 0) return new int[]{-1};
         // if method is smth else, throw some sort of exception? or turn methods into enums
         String resultRows = ""; // if nothing's found, assign an empty array.
@@ -98,7 +99,7 @@ class ModulesDatabase {
             if (moduleLeaderMatcher.lookingAt())
                 resultRows = resultRows + i + ",";
         }
-        return ModuleAppHelper.convertStringToIntArray(resultRows);
+        return getModulesByID(ModuleAppHelper.convertStringToIntArray(resultRows));
     }
 
     synchronized void updateModule(final int moduleRow, String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) throws InvalidModuleFormatException, EmptyValueException, DuplicateModuleException {
@@ -182,6 +183,13 @@ class ModulesDatabase {
     // Getters
     Module[] getDb() { return this.db; }
     Module getModule(int moduleRow) { return this.db[moduleRow]; }
+    Module[] getModulesByID(int[] modulesIDs) {
+        Module[] modulesArray = new Module[modulesIDs.length];
+        for (int i=0; i<modulesIDs.length; i++) {
+            modulesArray[i] = getModule(modulesIDs[i]);
+        }
+        return modulesArray;
+    }
  
     // Helpers
     void verifyNotDuplicate(String moduleCode) throws DuplicateModuleException {
