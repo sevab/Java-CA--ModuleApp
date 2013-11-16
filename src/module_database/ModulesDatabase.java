@@ -1,10 +1,11 @@
 /** TODO: currently the use of other methods requires calling loadCSV file; so, either
 *         a) throw an error message if loadCSVFile() isn't called first or 
-*         b) combine ModuleDatabase() with loadCSVFile()
+*         b) combine ModulesDatabase() with loadCSVFile()
 *
 *   TODO: when doing threading, warn user if he tries to quit the app while a tread hasn't finished writing to a file
 *   TODO: decide on uniform variable names (e.g. newModuleTitle vs newTitle)
-*   TODO: shall we return Module[] arrays instead of integer arrays? also, how about renaming findModuleRowByTitle to findByTitle, ModuleDatabase can then be renamed into ModulesDatabase
+*   TODO: shall we return Module[] arrays instead of integer arrays? also, how about renaming findModuleRowByTitle to findByTitle, ModulesDatabase can then be renamed into ModulesDatabase
+*   TODO: throw an error if a database w/o a file is queried?
 */
 
 package module_database;
@@ -23,11 +24,11 @@ import java.util.regex.Pattern;
  *
  * @author sevabaskin
  */
-class ModuleDatabase {
+class ModulesDatabase {
     private File databaseFile;
     private Module[] db;
 
-    ModuleDatabase() {    }
+    ModulesDatabase() {    }
 
     // TODO: normalize all queries by upcasing; normalize results as well?
     synchronized void loadCSVFile(String databaseFileDirectory) throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException {
@@ -38,8 +39,8 @@ class ModuleDatabase {
         String line;
         int i = 0;
         Pattern csvRegex = Pattern.compile("\"(.*?)\"");
-		while ((line = reader.readLine()) != null) {
-			// #OPTIMIZE
+        while ((line = reader.readLine()) != null) {
+            // #OPTIMIZE
             Matcher csvMatcher = csvRegex.matcher(line);
             csvMatcher.find();
             String newCode = csvMatcher.group(1);
@@ -51,35 +52,35 @@ class ModuleDatabase {
             String newLeaderEmail = csvMatcher.group(1);
 
             this.db[i] = new Module(newCode, newTitle, newLeaderName, newLeaderEmail);
-			i++;
-		}
+            i++;
+        }
     }
 
 
     int findModuleRowByCode(String moduleCodeQuery) {
-    	int resultRow = -1;
-    	for (int i=0; i < this.db.length ; i++) {
-    		if (getModule(i).getCode().equals(moduleCodeQuery)) {
-    			resultRow = i;
-    			break;
-    		}
-    	}
-    	return resultRow;
+        int resultRow = -1;
+        for (int i=0; i < this.db.length ; i++) {
+            if (getModule(i).getCode().equals(moduleCodeQuery)) {
+                resultRow = i;
+                break;
+            }
+        }
+        return resultRow;
     }
 
     // JavaDoc: Describe how strings are used to generte dynamyc-length arrays
     int[] findModuleRowsByYear(String moduleYearQuery) {
-    	// if (moduleYearQuery.length() == 0) return new int[]{-1};
+        // if (moduleYearQuery.length() == 0) return new int[]{-1};
         Pattern moduleYearRegex = Pattern.compile("(?<=^...)(1|2|3|M|m)");
-    	String resultRows = ""; // if nothing's found, assign an empty array.
-    	for (int i=0; i < this.db.length ; i++) {
-    		Matcher moduleYearMatcher = moduleYearRegex.matcher(getModule(i).getCode());
-    		moduleYearMatcher.find();
-		   	String candidateResult = moduleYearMatcher.group();
-    		if (candidateResult.equals(moduleYearQuery))
-    			resultRows = resultRows + i + ",";
-    	}
-    	return ModuleAppHelper.convertStringToIntArray(resultRows);
+        String resultRows = ""; // if nothing's found, assign an empty array.
+        for (int i=0; i < this.db.length ; i++) {
+            Matcher moduleYearMatcher = moduleYearRegex.matcher(getModule(i).getCode());
+            moduleYearMatcher.find();
+            String candidateResult = moduleYearMatcher.group();
+            if (candidateResult.equals(moduleYearQuery))
+                resultRows = resultRows + i + ",";
+        }
+        return ModuleAppHelper.convertStringToIntArray(resultRows);
     }
 
 
@@ -186,7 +187,7 @@ class ModuleDatabase {
     void verifyNotDuplicate(String moduleCode) throws DuplicateModuleException {
         for (Module module : this.db) {
             if (module.getCode().equals(moduleCode)){
-                throw new DuplicateModuleException();
+                throw new DuplicateModuleException("A module with the same module code already exists, you cannot add a duplicate.");
             }
         }
     }

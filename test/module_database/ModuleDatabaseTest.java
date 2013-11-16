@@ -32,7 +32,7 @@ public class ModuleDatabaseTest {
 //    @Ignore @Test
 //    public void testFirstLine() throws FileNotFoundException, IOException {
 //        String expected = "\"ECM1401\",\"Programming\",\"Jonathan Fieldsend\",\"J.E.Fieldsend@exeter.ac.uk\"";
-//        String actual = ModuleDatabase.loadCSVFile(this.test_csv_file);
+//        String actual = ModulesDatabase.loadCSVFile(this.test_csv_file);
 //        Assert.assertEquals(expected, actual);
 //    }
     
@@ -43,7 +43,7 @@ public class ModuleDatabaseTest {
         String[] expectedModuleLeaders = {"Jonathan Fieldsend", "Zena Wood", "Zena Wood"};
         String[] expectedModuleLeadersEmails = {"J.E.Fieldsend@exeter.ac.uk", "Z.M.Wood@exeter.ac.uk", "Z.M.Wood@exeter.ac.uk"};
 
-        ModuleDatabase test = new ModuleDatabase();
+        ModulesDatabase test = new ModulesDatabase();
         test.loadCSVFile(this.test_csv_file);
         for (int i = 0; i < 3 ; i++) {
             Assert.assertEquals(expectedModuleCodes[i], test.getModule(i).getCode());
@@ -58,7 +58,7 @@ public class ModuleDatabaseTest {
         String[] testQueries = {"ECM1401", "ECM1406", "ECM1407", "ECM3412", "NSCM002", "Non-existent module"};
         int[] expectedSearchResults = { 0, 2, 3, 27, 59, -1};
 
-        ModuleDatabase test = new ModuleDatabase();
+        ModulesDatabase test = new ModulesDatabase();
         test.loadCSVFile(this.test_csv_file);
 
         int i = 0;
@@ -75,7 +75,7 @@ public class ModuleDatabaseTest {
         String[] testQueries = {"1", "2", "3", "M"};
         int[][] expectedSearchResults = { {0,1,2}, {10,11,12}, {21,22,23}, {33,34,35}};
 
-        ModuleDatabase test = new ModuleDatabase();
+        ModulesDatabase test = new ModulesDatabase();
         test.loadCSVFile(this.test_csv_file);
 
         // Loop over test queries
@@ -97,7 +97,7 @@ public class ModuleDatabaseTest {
         String[] testQueries = {"Antony Galton", "Antony Galt", "Antony", "Ant"};
         int[][] expectedSearchResults = {{19,21,25,28,31}, {19,21,25,28,31}, {19,21,25,28,31}, {19,21,25,28,31}};
 
-        ModuleDatabase test = new ModuleDatabase();
+        ModulesDatabase test = new ModulesDatabase();
         test.loadCSVFile(this.test_csv_file);
 
         // Loop over test queries
@@ -119,7 +119,7 @@ public class ModuleDatabaseTest {
         String[] testQueries = {"A.P.Galton@ex.ac.uk", "A.P.Galton@ex.ac.", "A.P.Ga", "A.P"};
         int[][] expectedSearchResults = {{19,21,25,28,31}, {19,21,25,28,31}, {19,21,25,28,31}, {19,21,25,28,31}};
 
-        ModuleDatabase test = new ModuleDatabase();
+        ModulesDatabase test = new ModulesDatabase();
         test.loadCSVFile(this.test_csv_file);
 
         // Loop over test queries
@@ -138,7 +138,7 @@ public class ModuleDatabaseTest {
 
     @Test
     public void testGetCsvLine() throws FileNotFoundException, IOException {
-        ModuleDatabase test = new ModuleDatabase();
+        ModulesDatabase test = new ModulesDatabase();
         String expected = "\"ECM1402\",\"Computer Systems\",\"Zena Wood\",\"Z.M.Wood@exeter.ac.uk\"";
         String actual = ModuleAppHelper.getCsvLine(this.test_csv_file, 1);
         Assert.assertEquals(expected, actual);
@@ -148,7 +148,7 @@ public class ModuleDatabaseTest {
     @Test
     public void testModuleUpdate() throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException, DuplicateModuleException {
         ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
-        ModuleDatabase test = new ModuleDatabase();
+        ModulesDatabase test = new ModulesDatabase();
         test.loadCSVFile(this.test_csv_file);
 
         // Before Update:
@@ -180,7 +180,7 @@ public class ModuleDatabaseTest {
     @Test
     public void testModuleDelete() throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException, InterruptedException {
         ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
-        ModuleDatabase test = new ModuleDatabase();
+        ModulesDatabase test = new ModulesDatabase();
         test.loadCSVFile(this.test_csv_file);
 
         // Before Update:
@@ -214,7 +214,7 @@ public class ModuleDatabaseTest {
    @Test
     public void testModuleCreate() throws FileNotFoundException, IOException, DuplicateModuleException, InvalidModuleFormatException, EmptyValueException {
         ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
-        ModuleDatabase test = new ModuleDatabase();
+        ModulesDatabase test = new ModulesDatabase();
         test.loadCSVFile(this.test_csv_file);
 
         // Before Create:
@@ -251,7 +251,7 @@ public class ModuleDatabaseTest {
     @Test
     public void shouldThrowADuplicateExceptionWhenAddingADuplicate() throws FileNotFoundException, IOException, DuplicateModuleException, InvalidModuleFormatException, EmptyValueException {
 
-        ModuleDatabase test = new ModuleDatabase();
+        ModulesDatabase test = new ModulesDatabase();
         test.loadCSVFile(this.test_csv_file);
 
         int dbLengthBefore = test.getDb().length;
@@ -259,7 +259,9 @@ public class ModuleDatabaseTest {
             // try adding a duplicate
             test.createModule("ECM1401","Programming","Jonathan Fieldsend","J.E.Fieldsend@exeter.ac.uk");
             fail( "Missing exception" );
-        } catch (DuplicateModuleException e) {}
+        } catch (DuplicateModuleException ex) {
+             Assert.assertTrue(ex.getMessage().equals("A module with the same module code already exists, you cannot add a duplicate."));
+        }
 
         int dbLengthAfter = test.getDb().length;
 
@@ -273,7 +275,7 @@ public class ModuleDatabaseTest {
 
     @Test
     public void shouldNotUpdateModuleWithDuplicateValues() throws FileNotFoundException, IOException, DuplicateModuleException, InvalidModuleFormatException, EmptyValueException, DuplicateModuleException {
-        ModuleDatabase test = new ModuleDatabase();
+        ModulesDatabase test = new ModulesDatabase();
         test.loadCSVFile(this.test_csv_file);
 
 
@@ -283,7 +285,9 @@ public class ModuleDatabaseTest {
             // however, updating one module's code with that of another module's code should throw a DuplicateModuleException
             test.updateModule(2, "ECM1401","Programming","Jonathan Fieldsend","J.E.Fieldsend@exeter.ac.uk");
             fail( "Missing exception" );
-        } catch (DuplicateModuleException e) {}
+        } catch (DuplicateModuleException e) {
+             Assert.assertTrue(e.getMessage().equals("A module with the same module code already exists, you cannot add a duplicate."));
+        }
         ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
     }
 
@@ -292,7 +296,7 @@ public class ModuleDatabaseTest {
 
     // @Test
     // public void testSearchByModuleLeaderEmailCornerCases() throws FileNotFoundException, IOException {
-    //     ModuleDatabase test = new ModuleDatabase();
+    //     ModulesDatabase test = new ModulesDatabase();
     //     test.loadCSVFile("/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/modules.csv");
     //         int[] expectedSearchResult = {-1};
     //         int[] actualSearchResult = test.findModuleRowsByLeaderEmail("");
