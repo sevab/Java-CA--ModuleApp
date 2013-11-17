@@ -48,5 +48,7 @@ class Module {
 	String[] getFullInfo() {
     	return new String[]{ this.code, this.title, this.leaderName, this.leaderEmail };
     }
-    // String toString() {}
+    String toString(String separator) {
+    	return this.code + separator + this.title + separator + this.leaderName + separator + this.leaderEmail;
+    }
 }

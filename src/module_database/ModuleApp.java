@@ -1,4 +1,5 @@
-// TODO: make a line is added to the file
+// TODO: make sure a line is added to the file
+// TODO: before quiting wait till all threads finish executing
 
 package module_database;
 
@@ -112,19 +113,46 @@ public class ModuleApp {
     }
 
     static void searchByCode(){
-  //   	try {
-		// 	System.out.print("Enter the exact module code: ");		
-		//     String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
-	 //    	findModuleRowByCode(userInput);
-	 //    	}
-		// } catch (IOException ioe) {
-		// 	System.out.println("Oops..somethign went wrong."); System.exit(1);
-		// }
+    	try {
+			System.out.print("Enter the exact module code: ");		
+		    String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
+	    	Module[] searchResults = modulesDB.findModuleRowByCode(userInput);
+	    	printOutModules(searchResults);
+		} catch (IOException ioe) {
+			System.out.println("Oops..somethign went wrong."); System.exit(1);
+		}
 
     }
-    static void searchByYear(){}
+    static void searchByYear(){
+    	search("year", "Enter the year level: ");
+    }
     static void searchByName(){}
     static void searchByEmail(){}
+
+    static void search(String method, String promptMessage) {
+		try {
+			System.out.print(promptMessage);		
+		    String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
+	    	Module[] searchResults = null;
+			switch(method) {
+				case "code"  : searchResults = modulesDB.findModuleRowByCode(userInput); break;
+				case "year"  : searchResults = modulesDB.findModuleRowsByYear(userInput); break;
+				case "name"  : searchResults = modulesDB.findModuleRowsByLeader("name",  userInput); break;
+				case "email" : searchResults = modulesDB.findModuleRowsByLeader("email", userInput); break;
+			}
+	    	printOutModules(searchResults);
+		} catch (IOException ioe) {
+			System.out.println("Oops..somethign went wrong."); System.exit(1);
+		}
+    }
+
+
+    static void printOutModules(Module[] modulesArray) {
+    	System.out.println("Module Code   Module Title        Leader Name     Leader Email");
+    	for (int i=0; i<modulesArray.length; i++) {
+    		System.out.println(modulesArray[i].toString("   "));
+    	}
+    }
 
 
     static void printSearchOptions() {
