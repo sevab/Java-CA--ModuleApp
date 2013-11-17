@@ -6,6 +6,7 @@
 *   TODO: decide on uniform variable names (e.g. newModuleTitle vs newTitle)
 *   TODO: shall we return Module[] arrays instead of integer arrays? also, how about renaming findModuleRowByTitle to findByTitle, ModulesDatabase can then be renamed into ModulesDatabase
 *   TODO: throw an error if a database w/o a file is queried?
+*   TODO: rename all findModuleRowsBy* to findModulesBy
 */
 
 package module_database;
@@ -56,7 +57,6 @@ class ModulesDatabase {
         }
     }
 
-
     Module[] findModuleRowByCode(String moduleCodeQuery) {
         Module[] resultRow = {};
         for (int i=0; i < this.db.length ; i++) {
@@ -102,7 +102,21 @@ class ModulesDatabase {
         return getModulesByID(ModuleAppHelper.convertStringToIntArray(resultRows));
     }
 
-    synchronized void updateModule(final int moduleRow, String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) throws InvalidModuleFormatException, EmptyValueException, DuplicateModuleException {
+
+
+
+
+    synchronized void updateModuleByModuleCode(String moduleCode, String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail)
+    throws InvalidModuleFormatException, EmptyValueException, DuplicateModuleException {
+        for (int i=0; i< this.db.length; i++) {
+            if (this.db[i].getCode().equals(moduleCode))
+                updateModule(i, newModuleCode, newModuleTitle, newModuleLeaderName, newModuleLeaderEmail);
+            // else, throw ModuleNotFound exception
+        }
+    }
+
+    synchronized void updateModule(final int moduleRow, String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail)
+    throws InvalidModuleFormatException, EmptyValueException, DuplicateModuleException {
         // TODO: extract into to private methods updateDatabaseArray & updateDatabaseCSV, then call both in here after validating values
 
         File tempDatabaseFile = new File("temp_" + this.databaseFile.getName());
@@ -138,8 +152,17 @@ class ModulesDatabase {
 
     }
 
+    // deleteModule isn't really needed, can rewrite deleteModuleByModuleCode to do the same
+    synchronized void deleteModuleByModuleCode(String moduleCode) {
+        for (int i=0; i< this.db.length; i++) {
+            if (this.db[i].getCode().equals(moduleCode))
+                deleteModule(i);
+            // else, throw ModuleNotFound exception
+        }
+    }
+
     synchronized void deleteModule(final int moduleRow) {
-        // TODO: throw an exception if nothing's found?
+        // TODO: throw ModuleNotFound exception otherwise
         // delete from the database Array first
         Module[] newDB = new Module[this.db.length-1];
         int j = 0;
@@ -182,6 +205,7 @@ class ModulesDatabase {
 
     // Getters
     Module[] getDb() { return this.db; }
+    // get Module by row is a better name
     Module getModule(int moduleRow) { return this.db[moduleRow]; }
     Module[] getModulesByID(int[] modulesIDs) {
         Module[] modulesArray = new Module[modulesIDs.length];

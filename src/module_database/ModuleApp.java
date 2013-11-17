@@ -1,5 +1,6 @@
 // TODO: make sure a line is added to the file
 // TODO: before quiting wait till all threads finish executing
+// TODO: change default action to repeat itself rather than delete an application
 
 package module_database;
 
@@ -31,8 +32,8 @@ public class ModuleApp {
 			System.out.print("Enter an option: ");		
 		    String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
 	    	switch (userInput) {
-	    		case "a": addNewModuleProcedure(); break;
-	    		case "b": searchDatabaseProcedure(); break;
+	    		case "1": addNewModuleProcedure(); break;
+	    		case "2": selectSearchOption(); break;
 	    		case "x": System.exit(0);
 	    		case "X": System.exit(0);
 	    		default: break;
@@ -94,42 +95,81 @@ public class ModuleApp {
 
 
 
-    static void searchDatabaseProcedure() {
+    static void selectSearchOption() {
     	printSearchOptions();
     	try {
 			System.out.print("Enter an option: ");		
 		    String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
 	    	switch (userInput) {
-	    		case "a": searchByCode(); break;
-	    		case "b": searchByYear(); break;
-	    		case "c": searchByName(); break;
-	    		case "d": searchByEmail(); break;
+	    		case "1": searchByCode(); break;
+	    		case "2": searchByYear(); break;
+	    		case "3": searchByName(); break;
+	    		case "4": searchByEmail(); break;
+	    		case "x": System.exit(0);
+	    		case "X": System.exit(0);
 	    		default: break;
+	    	}
+	    	selectCRUDoption();
+		} catch (IOException ioe) {
+			System.out.println("Oops..somethign went wrong."); System.exit(1);
+		}
+    }
+
+    static void printCRUDoptions() {
+		System.out.println("Select one of the following options:");
+    	System.out.println("====================================");
+    	System.out.println("(1) Delete a module");
+    	System.out.println("(2) Update a module");
+    	System.out.println("(3) Perform another search");
+    	System.out.println("(4) Return to main menu");
+    	System.out.println("(x) Exit Modules App");
+    }
+    static void selectCRUDoption() {
+    	printCRUDoptions();
+    	try {
+			System.out.print("Make an action: ");		
+		    String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
+	    	switch (userInput) {
+	    		case "1"	 	: deleteModule(); break;
+	    		case "2"		: updateModule(); break;
+	    		case "search"	: selectSearchOption(); break;
+	    		case "main menu": selectMainOption(); break;
+	    		case "x"		: System.exit(0);
+	    		case "X"		: System.exit(0);
+	    		default			: break;
 	    	}
 		} catch (IOException ioe) {
 			System.out.println("Oops..somethign went wrong."); System.exit(1);
 		}
-
     }
 
-    static void searchByCode(){
+    // catch ModuleNotFound & blank exceptions
+    static void deleteModule() {
     	try {
-			System.out.print("Enter the exact module code: ");		
+			System.out.print("Delete module with the code: ");		
 		    String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
-	    	Module[] searchResults = modulesDB.findModuleRowByCode(userInput);
-	    	printOutModules(searchResults);
+	    	modulesDB.deleteModuleByModuleCode(userInput);
+	    	// if found
+			System.out.print("The module " + userInput + " has been successfuly removed from the database");
 		} catch (IOException ioe) {
 			System.out.println("Oops..somethign went wrong."); System.exit(1);
 		}
-
     }
-    static void searchByYear(){
-    	search("year", "Enter the year level: ");
-    }
-    static void searchByName(){}
-    static void searchByEmail(){}
 
-    static void search(String method, String promptMessage) {
+    // catch ModuleNotFound & blank exceptions
+    static void updateModule() {
+  //   	System.out.print("Update module with the code: ");		
+	 //    String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
+  //   	modulesDB.updateModuleByModuleCode(userInput);
+  //   	// if found
+		// System.out.print("The module " + userInput + " has been successfuly removed from the database");
+    }
+
+    static void searchByCode(){  search("code", "Enter the exact module code: "); }
+    static void searchByYear(){  search("year", "Enter modules' year level: "); }
+    static void searchByName(){  search("name", "Enter modules' leader name: "); }
+    static void searchByEmail(){ search("email", "Enter modules' leader email: "); }
+    private static void search(String method, String promptMessage) {
 		try {
 			System.out.print(promptMessage);		
 		    String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
@@ -139,6 +179,7 @@ public class ModuleApp {
 				case "year"  : searchResults = modulesDB.findModuleRowsByYear(userInput); break;
 				case "name"  : searchResults = modulesDB.findModuleRowsByLeader("name",  userInput); break;
 				case "email" : searchResults = modulesDB.findModuleRowsByLeader("email", userInput); break;
+				default      : break;
 			}
 	    	printOutModules(searchResults);
 		} catch (IOException ioe) {
@@ -148,20 +189,21 @@ public class ModuleApp {
 
 
     static void printOutModules(Module[] modulesArray) {
+    	System.out.println( "================== Results ==================");
     	System.out.println("Module Code   Module Title        Leader Name     Leader Email");
     	for (int i=0; i<modulesArray.length; i++) {
-    		System.out.println(modulesArray[i].toString("   "));
+    		System.out.println(modulesArray[i].toString("       "));
     	}
     }
 
 
     static void printSearchOptions() {
     	System.out.println("Select one of the following search options:");
-    	System.out.println( "====================================");
-    	System.out.println("(a) Find Module by Module Code");
-    	System.out.println("(b) Find Module by Year Level");
-    	System.out.println("(c) Find Module by Module Leader Name");
-    	System.out.println("(d) Find Module by Module Leader Email");
+    	System.out.println("===========================================");
+    	System.out.println("(1) Find Module by Module Code");
+    	System.out.println("(2) Find Module by Year Level");
+    	System.out.println("(3) Find Module by Module Leader Name");
+    	System.out.println("(4) Find Module by Module Leader Email");
     }
 
 
@@ -198,8 +240,8 @@ public class ModuleApp {
     static void printMainOptions() {
     	System.out.println("Select one of the following options:");
     	System.out.println( "====================================");
-    	System.out.println("(a) Add new module to a database");
-    	System.out.println("(b) Search and modify existing modules");
+    	System.out.println("(1) Add new module to a database");
+    	System.out.println("(2) Search and modify existing modules");
     	System.out.println("(x) Exit Modules App");
     }
 
