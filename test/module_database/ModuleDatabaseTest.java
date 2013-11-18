@@ -130,7 +130,6 @@ public class ModuleDatabaseTest {
             String moduleLeaderEmailQuery = testQueries[i];
             String[] expectedSearchResult = expectedSearchResults[i];
             Module[] actualSearchResult = test.findModuleRowsByLeader("email", moduleLeaderEmailQuery);
-            
 
             // System.out.println(actualSearchResult + " " + moduleCodeQuery + " " + expectedSearchResults[i]);
             for (int j=0; j<5; j++) {
@@ -181,7 +180,8 @@ public class ModuleDatabaseTest {
     }
 
     @Test
-    public void testModuleDelete() throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException, InterruptedException {
+    public void testModuleDelete()
+    throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException, InterruptedException {
         ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
         ModulesDatabase test = new ModulesDatabase();
         test.loadCSVFile(this.test_csv_file);
@@ -208,14 +208,14 @@ public class ModuleDatabaseTest {
         String[] actualArrayTwo = test.getModule(1).getFullInfo();
         Assert.assertArrayEquals(expectedArrayTwo, actualArrayTwo);
         
-
         // Restore database file back to the original, pre-test state
         ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
     }
 
 
    @Test
-    public void testModuleCreate() throws FileNotFoundException, IOException, DuplicateModuleException, InvalidModuleFormatException, EmptyValueException {
+    public void testModuleCreate()
+    throws FileNotFoundException, IOException, DuplicateModuleException, InvalidModuleFormatException, EmptyValueException {
         ModuleAppHelper.restoreDatabaseFileFromBackUp(this.backup_csv_file, this.test_csv_file);
         ModulesDatabase test = new ModulesDatabase();
         test.loadCSVFile(this.test_csv_file);
@@ -252,7 +252,8 @@ public class ModuleDatabaseTest {
     }
     // (expected=UnknownUserException.class)
     @Test
-    public void shouldThrowADuplicateExceptionWhenAddingADuplicate() throws FileNotFoundException, IOException, DuplicateModuleException, InvalidModuleFormatException, EmptyValueException {
+    public void shouldThrowADuplicateExceptionWhenAddingADuplicate()
+    throws FileNotFoundException, IOException, DuplicateModuleException, InvalidModuleFormatException, EmptyValueException {
 
         ModulesDatabase test = new ModulesDatabase();
         test.loadCSVFile(this.test_csv_file);
@@ -277,10 +278,10 @@ public class ModuleDatabaseTest {
     }
 
     @Test
-    public void shouldNotUpdateModuleWithDuplicateValues() throws FileNotFoundException, IOException, DuplicateModuleException, InvalidModuleFormatException, EmptyValueException, DuplicateModuleException {
+    public void shouldNotUpdateModuleWithDuplicateValues()
+    throws FileNotFoundException, IOException, DuplicateModuleException, InvalidModuleFormatException, EmptyValueException, DuplicateModuleException {
         ModulesDatabase test = new ModulesDatabase();
         test.loadCSVFile(this.test_csv_file);
-
 
         try {
             // it is allowed to update itself with the same values

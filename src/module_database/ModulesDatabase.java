@@ -44,13 +44,13 @@ class ModulesDatabase {
             // #OPTIMIZE
             Matcher csvMatcher = csvRegex.matcher(line);
             csvMatcher.find();
-            String newCode = csvMatcher.group(1);
+            String newCode = csvMatcher.group(1).toUpperCase();
             csvMatcher.find();
             String newTitle = csvMatcher.group(1);
             csvMatcher.find();
             String newLeaderName = csvMatcher.group(1);
             csvMatcher.find();
-            String newLeaderEmail = csvMatcher.group(1);
+            String newLeaderEmail = csvMatcher.group(1).toLowerCase();
 
             this.db[i] = new Module(newCode, newTitle, newLeaderName, newLeaderEmail);
             i++;
@@ -70,36 +70,52 @@ class ModulesDatabase {
     }
 
     // JavaDoc: Describe how strings are used to generte dynamyc-length arrays
-    Module[] findModuleRowsByYear(String moduleYearQuery) {
-        // if (moduleYearQuery.length() == 0) return new int[]{-1};
-        Pattern moduleYearRegex = Pattern.compile("(?<=^...)(1|2|3|M|m)");
+    // TODO: upcase
+    Module[] findModuleRowsByYear(String query) throws InvalidQueryFormatException {
+        if (query.length() == 0) return new Module[]{};
+        ModuleAppHelper.validateModuleYearQuery(query);
+        Pattern moduleYearRegex = Pattern.compile("(?<=^...)(1|2|3|M)");
         String resultRows = ""; // if nothing's found, assign an empty array.
         for (int i=0; i < this.db.length ; i++) {
             Matcher moduleYearMatcher = moduleYearRegex.matcher(getModule(i).getCode());
             moduleYearMatcher.find();
             String candidateResult = moduleYearMatcher.group();
-            if (candidateResult.equals(moduleYearQuery))
+            if (candidateResult.equals(query.toUpperCase()))
                 resultRows = resultRows + i + ",";
         }
-        return getModulesByID(ModuleAppHelper.convertStringToIntArray(resultRows));
+        switch (resultRows) {
+            case "" : return new Module[]{};
+            default : return getModulesByID(ModuleAppHelper.convertStringToIntArray(resultRows));
+        }
     }
 
-
+    // TODO: test when nothing's found
+    // JavaDoc returns empty array if nothing's found or the query's empty
     Module[] findModuleRowsByLeader(String method, String query) {
-        // if (moduleLeaderEmailQuery.length() == 0) return new int[]{-1};
+        if (query.length() == 0) return new Module[]{};
         // if method is smth else, throw some sort of exception? or turn methods into enums
-        String resultRows = ""; // if nothing's found, assign an empty array.
-        Pattern pattern = Pattern.compile(query);
+        String resultRows = ""; // if nothing's found, assign an empty array
+        Pattern pattern = null;
+        System.out.println("user query: " + query);
+        System.out.println("user query_to_lowercase: " + query.toLowerCase());
+        switch(method) {
+            case "name"  : pattern = Pattern.compile(query); break;
+            case "email" : pattern = Pattern.compile(query.toLowerCase()); break; // downcase email queries since all emails are stored in lowercase
+        }
         Matcher moduleLeaderMatcher = null;
         for (int i=0; i < this.db.length ; i++) {
-            if (method.equals("name"))
-                moduleLeaderMatcher = pattern.matcher(getModule(i).getLeaderName());
-            if (method.equals("email"))
-                moduleLeaderMatcher = pattern.matcher(getModule(i).getLeaderEmail());
+            switch(method) {
+                case "name"  : moduleLeaderMatcher = pattern.matcher(getModule(i).getLeaderName()); break;
+                case "email" : moduleLeaderMatcher = pattern.matcher(getModule(i).getLeaderEmail()); break;
+            }
             if (moduleLeaderMatcher.lookingAt())
                 resultRows = resultRows + i + ",";
         }
-        return getModulesByID(ModuleAppHelper.convertStringToIntArray(resultRows));
+        System.out.println("result rows: " + resultRows);
+        switch (resultRows) {
+            case "" : return new Module[]{};
+            default : return getModulesByID(ModuleAppHelper.convertStringToIntArray(resultRows));
+        }
     }
 
 

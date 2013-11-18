@@ -14,6 +14,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 /**
  *
@@ -21,6 +24,27 @@ import java.nio.channels.FileChannel;
  */
 public class ModuleAppHelper {
     // TODO: split into ModuleUtils & ModuleFileHandler classes?
+
+
+
+
+
+    static void validateModuleYearQuery(String query) throws InvalidQueryFormatException {
+        String pattern = "(1|2|3|M)";
+        Pattern regex = Pattern.compile(pattern);
+        Matcher match = regex.matcher(query.toUpperCase());
+        if (!match.matches())
+            throw new InvalidQueryFormatException("Your query '" + query + "' is invalid. Make sure it's one of these: 1,2,3 or M.");
+    }
+
+
+
+
+
+
+
+
+
 
 	static void appendLineToFile(File file, String line) {
         // maybe should return a boolean if successful
@@ -69,9 +93,11 @@ public class ModuleAppHelper {
 	// Used by search modules to  dynamically create arrays from strings
     static int[] convertStringToIntArray(String str) {
 		String[] strArray = str.split(",");
+        System.out.println("str: " + str);
 		int[] intArray = new int[strArray.length];
-		for (int i = 0; i < strArray.length; i++)
-			intArray[i] = Integer.parseInt(strArray[i]);		
+		for (int i = 0; i < strArray.length; i++) {
+            intArray[i] = Integer.parseInt(strArray[i]);
+        }
 		return intArray;
     }
 
