@@ -170,7 +170,6 @@ class ModulesDatabase {
             moduleToUpdate.setLeaderEmail(newModuleLeaderEmail);
 
         // update the CSV file
-        // TODO: Move to thread
         final String substituteLine = "\""+ moduleToUpdate.getCode() +
                                       "\",\"" + moduleToUpdate.getTitle()  +
                                       "\",\"" + moduleToUpdate.getLeaderName()  +
@@ -179,8 +178,7 @@ class ModulesDatabase {
         new Thread() {
             public void run() {
                 ModuleAppHelper.modifyLineInAFile(databaseFile, moduleRow, "update", substituteLine);
-                // Catch InterruptedException? "File-writing has been inturrupted. The database csv file may be corrupt."
-                // No. Just ship, handle later.
+                // TODO: Catch InterruptedException ? "File-writing has been inturrupted. The database csv file may be corrupt."
             }
         }.start();
 
@@ -188,12 +186,9 @@ class ModulesDatabase {
     }
 
     // deleteModule isn't really needed, can rewrite deleteModuleByModuleCode to do the same
-    synchronized void deleteModuleByModuleCode(String moduleCode) {
-        for (int i=0; i< this.db.length; i++) {
-            if (this.db[i].getCode().equals(moduleCode))
-                deleteModule(i);
-            // else, throw ModuleNotFound exception
-        }
+    synchronized void deleteModuleByModuleCode(String moduleCode) throws NonexistentModuleException {
+        int moduleRow = getModuleRow(moduleCode);
+        deleteModule(moduleRow);
     }
 
     synchronized void deleteModule(final int moduleRow) {
