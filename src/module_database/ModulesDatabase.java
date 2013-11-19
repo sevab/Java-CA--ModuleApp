@@ -32,7 +32,8 @@ class ModulesDatabase {
     ModulesDatabase() {    }
 
     // TODO: normalize all queries by upcasing; normalize results as well?
-    synchronized void loadCSVFile(String databaseFileDirectory) throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException {
+    synchronized void loadCSVFile(String databaseFileDirectory)
+        throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException, FileIntegrityException {
         // create an array as large as there're numbers in a csv file
         this.db = new Module[ModuleAppHelper.linesInAFile(databaseFileDirectory)];
         this.databaseFile = new File(databaseFileDirectory);
@@ -51,23 +52,32 @@ class ModulesDatabase {
             String newLeaderName = csvMatcher.group(1);
             csvMatcher.find();
             String newLeaderEmail = csvMatcher.group(1).toLowerCase();
-
-            this.db[i] = new Module(newCode, newTitle, newLeaderName, newLeaderEmail);
+            try {
+                this.db[i] = new Module(newCode, newTitle, newLeaderName, newLeaderEmail);
+            } catch (InvalidModuleFormatException | EmptyValueException e) {
+                throw new FileIntegrityException(
+                    "Error while reading the CSV file. A module record on line " + i + " has the following integrity error:" +
+                    "\n(!) " + e.getMessage() + "\n"
+                    );
+            }
+            
             i++;
         }
     }
 
-    Module[] findModuleRowByCode(String moduleCodeQuery) {
+    Module[] findModuleRowByCode(String query) throws InvalidModuleFormatException, EmptyValueException {
+        ModuleValidator.validateCode(query);
         Module[] resultRow = {};
         for (int i=0; i < this.db.length ; i++) {
-            if (getModule(i).getCode().equals(moduleCodeQuery)) {
+            if (getModule(i).getCode().equals(query)) {
                 resultRow = new Module[]{getModule(i)};
                 break;
             }
         }
         return resultRow;
-
     }
+
+
 
     // JavaDoc: Describe how strings are used to generte dynamyc-length arrays
     // TODO: upcase
@@ -96,8 +106,6 @@ class ModulesDatabase {
         // if method is smth else, throw some sort of exception? or turn methods into enums
         String resultRows = ""; // if nothing's found, assign an empty array
         Pattern pattern = null;
-        System.out.println("user query: " + query);
-        System.out.println("user query_to_lowercase: " + query.toLowerCase());
         switch(method) {
             case "name"  : pattern = Pattern.compile(query); break;
             case "email" : pattern = Pattern.compile(query.toLowerCase()); break; // downcase email queries since all emails are stored in lowercase
@@ -111,7 +119,6 @@ class ModulesDatabase {
             if (moduleLeaderMatcher.lookingAt())
                 resultRows = resultRows + i + ",";
         }
-        System.out.println("result rows: " + resultRows);
         switch (resultRows) {
             case "" : return new Module[]{};
             default : return getModulesByID(ModuleAppHelper.convertStringToIntArray(resultRows));
@@ -119,16 +126,26 @@ class ModulesDatabase {
     }
 
 
-
-
-
-    synchronized void updateModuleByModuleCode(String moduleCode, String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail)
-    throws InvalidModuleFormatException, EmptyValueException, DuplicateModuleException {
+    // returns row of the module in the db array. throws NonexistentModuleException module exception if nothing's found
+    int getModuleRow(String moduleCode) throws NonexistentModuleException {
+        int result = -1;
         for (int i=0; i< this.db.length; i++) {
-            if (this.db[i].getCode().equals(moduleCode))
-                updateModule(i, newModuleCode, newModuleTitle, newModuleLeaderName, newModuleLeaderEmail);
-            // else, throw ModuleNotFound exception
+            if (this.db[i].getCode().equals(moduleCode)) {
+                result = i;
+                break;
+            }
         }
+        if (result == -1)
+            throw new NonexistentModuleException("The module you have entered does not exist. Try again.");
+        return result;
+    }
+
+
+    // TODO: rewrite to take module code by default?
+    synchronized void updateModuleByModuleCode(String moduleCode, String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail)
+    throws InvalidModuleFormatException, EmptyValueException, DuplicateModuleException, NonexistentModuleException {
+        int moduleRow = getModuleRow(moduleCode);
+        updateModule(moduleRow, newModuleCode, newModuleTitle, newModuleLeaderName, newModuleLeaderEmail);
     }
 
     synchronized void updateModule(final int moduleRow, String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail)
@@ -152,9 +169,14 @@ class ModulesDatabase {
         if (!newModuleLeaderEmail.equals(""))
             moduleToUpdate.setLeaderEmail(newModuleLeaderEmail);
 
+
+
         // update the CSV file
         // TODO: Move to thread
-        final String substituteLine = "\""+newModuleCode+"\",\""+ newModuleTitle +"\",\""+ newModuleLeaderName +"\",\""+newModuleLeaderEmail+"\"";
+        final String substituteLine = "\""+ moduleToUpdate.getCode() +
+                                      "\",\"" + moduleToUpdate.getTitle()  +
+                                      "\",\"" + moduleToUpdate.getLeaderName()  +
+                                      "\",\"" + moduleToUpdate.getLeaderEmail() +"\"";
         
         new Thread() {
             public void run() {

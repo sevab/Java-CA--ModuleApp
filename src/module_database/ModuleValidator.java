@@ -23,7 +23,7 @@ public class ModuleValidator {
 		validateLeaderName(leaderName);
 		validateEmail(leaderEmail);
 	}
-	public static void validateCode(String moduleCode) throws InvalidModuleFormatException, EmptyValueException  {
+	public static void validateCode(String moduleCode) throws InvalidModuleFormatException, EmptyValueException {
 	    validadeEmptyness(moduleCode, emptyModuleCodeErrorMessage);
 	    validatePattern(moduleCode, "[A-Z]{3}(1|2|3|M)\\d{3}", invalidModuleCodeFormatErrorMessage);
 	}

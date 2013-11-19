@@ -17,7 +17,7 @@ public class ModuleApp {
 	private static ModulesDatabase modulesDB;
 // 			/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/test/module_database/test_modules.csv
 
-	public static void main(String[] args) throws IOException, InvalidQueryFormatException  {
+	public static void main(String[] args) throws IOException, InvalidQueryFormatException, NonexistentModuleException, EmptyValueException   {
 		System.out.println("##################################### ");
 		System.out.println("Welcome to the Modules Database app!\n");
 		addFileProcedure();
@@ -26,17 +26,18 @@ public class ModuleApp {
     }
 
 	// Default: print an error, reprint self
-    static void selectMainOption() throws IOException, InvalidQueryFormatException {
+    static void selectMainOption() throws IOException, InvalidQueryFormatException, NonexistentModuleException, EmptyValueException  {
 		printMainOptions();
 		try {
-			System.out.print("Enter an option: ");		
+			System.out.print("Enter an option: ");
 		    String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
 	    	switch (userInput) {
-	    		case "1": addNewModuleProcedure(); break;
+	    		case "1": newModuleProcedure(); break;
 	    		case "2": selectSearchOption(); break;
 	    		case "x": System.exit(0);
 	    		case "X": System.exit(0);
-	    		default: break;
+	    		default : System.out.println("\nSorry, that's not an available option.\n");
+	    				  selectMainOption();
 	    	}
 		} catch (IOException ioe) {
 			System.out.println("Oops..somethign went wrong.");
@@ -44,23 +45,28 @@ public class ModuleApp {
 		}
 
     }
-    // static void print(String str) {
-    // 	System.out.println(str);
-    // }
-
-    // catch ModuleNotFound & blank exceptions
-    static void updateModule() {
-  //   	System.out.print("Update module with the code: ");		
-	 //    String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
-  //   	modulesDB.updateModuleByModuleCode(userInput);
-  //   	// if found
-		// System.out.print("The module " + userInput + " has been successfuly removed from the database");
+    static void updateModuleProcedure() throws IOException, InvalidQueryFormatException, NonexistentModuleException, EmptyValueException {
+    	try {
+			System.out.print("Enter code of the module to update: ");
+		    String moduleToUpdate = (new BufferedReader(new InputStreamReader(System.in))).readLine();
+	    	ModuleValidator.validateCode(moduleToUpdate);
+	    	modulesDB.getModuleRow(moduleToUpdate); // just verify exists
+	  		modifyModuleProcedure("update", moduleToUpdate);
+		} catch (IOException ioe) {
+			System.out.println("Oops..somethign went wrong.");
+			System.exit(1);
+		} catch (InvalidModuleFormatException | EmptyValueException | NonexistentModuleException e) {
+			System.out.println("\n(!) " + e.getMessage() + "\n");
+			updateModuleProcedure();
+		}
     }
-
-    static void addNewModuleProcedure() throws IOException, InvalidQueryFormatException  {
+    static void newModuleProcedure() throws IOException, InvalidQueryFormatException, NonexistentModuleException, EmptyValueException  {
+    	modifyModuleProcedure("create", null);
+    }
+    static void modifyModuleProcedure(String method, String moduleToUpdate) throws IOException, InvalidQueryFormatException, NonexistentModuleException, EmptyValueException  {
 		String newModuleCode, newModuleTitle, newModuleLeaderName, newModuleLeaderEmail;
 		newModuleCode = newModuleTitle = newModuleLeaderName = newModuleLeaderEmail = null;
-		String[] moduleArgs = {newModuleCode, newModuleTitle, newModuleLeaderName, newModuleLeaderEmail};
+		String[] moduleArgs = new String[4];
 
 		String codeMessage = "Enter new module code: ";
 		String titleMessage = "Enter new module title: ";
@@ -73,15 +79,21 @@ public class ModuleApp {
 				try {
 					System.out.print(promptMessages[i]);
 					moduleArgs[i] = (new BufferedReader(new InputStreamReader(System.in))).readLine();
-
-					switch (i) {
-						case 0: ModuleValidator.validateCode(moduleArgs[i]); break;
-						case 1: ModuleValidator.validateTitle(moduleArgs[i]); break;
-						case 2: ModuleValidator.validateLeaderName(moduleArgs[i]); break;
-						case 3: ModuleValidator.validateEmail(moduleArgs[i]); break;
+					
+					// only validate user inputs when it is create or is non-blank
+					// i.e. when updating a module, allow empty inputs to skip updating a specific field:
+					if (!moduleArgs[i].equals("") || method.equals("create")) {
+						switch (i) {
+							case 0: ModuleValidator.validateCode(moduleArgs[i]); break;
+							case 1: ModuleValidator.validateTitle(moduleArgs[i]); break;
+							case 2: ModuleValidator.validateLeaderName(moduleArgs[i]); break;
+							case 3: ModuleValidator.validateEmail(moduleArgs[i]); break;
+						}	
 					}
+					
 
 				} catch (Exception e) {
+					// TODO: catch Java 7-style
 					if (e instanceof InvalidModuleFormatException || e instanceof EmptyValueException) {
 						moduleArgs[i] = null;
 						System.out.println("\n(!) " + e.getMessage() + "\n");
@@ -90,8 +102,14 @@ public class ModuleApp {
 			}
 		}
     	try {
-    		modulesDB.createModule(newModuleCode, newModuleTitle, newModuleLeaderName, newModuleLeaderEmail);
-	    	System.out.println("Success! The module has been added.");
+    		switch(method) {
+    			case "create" : modulesDB.createModule(moduleArgs[0], moduleArgs[1], moduleArgs[2], moduleArgs[3]);
+    				    		System.out.println("Success! The module has been updated.");
+								break;
+    			case "update" : modulesDB.updateModuleByModuleCode(moduleToUpdate, moduleArgs[0], moduleArgs[1], moduleArgs[2], moduleArgs[3]);
+				    			System.out.println("Success! The module has been added.");
+								break;
+    		}
     	} catch  (Exception e) {
 			if (e instanceof InvalidModuleFormatException || e instanceof EmptyValueException || e instanceof DuplicateModuleException) {
 				System.out.println("\n(!) " + e.getMessage() + "\n");
@@ -114,7 +132,7 @@ public class ModuleApp {
     	System.out.println("(4) Find Module by Module Leader Email");
     	System.out.println("(5) Return to main menu");
     }
-    static void selectSearchOption()  throws InvalidQueryFormatException {
+    static void selectSearchOption() throws InvalidQueryFormatException, NonexistentModuleException, EmptyValueException  {
     	printSearchOptions();
     	try {
 			System.out.print("Enter an option: ");		
@@ -127,7 +145,7 @@ public class ModuleApp {
 	    		case "5": selectMainOption(); break;
 	    		case "x": System.exit(0);
 	    		case "X": System.exit(0);
-	    		default:  System.out.println("\nSorry, that's not an available option.\n");
+	    		default :  System.out.println("\nSorry, that's not an available option.\n");
 	    				  selectSearchOption(); //TODO: extract into a helper to use by other methods as well
 	    	}
 	    	// selectCRUDoption();
@@ -146,14 +164,14 @@ public class ModuleApp {
     	System.out.println("(4) Return to main menu");
     }
     // TODO: don't quit if else is written, simply reprint itself
-    static void selectCRUDoption() throws InvalidQueryFormatException {
+    static void selectCRUDoption() throws InvalidQueryFormatException, NonexistentModuleException, EmptyValueException {
     	printCRUDoptions();
     	try {
-			System.out.print("Make an action: ");		
+			System.out.print("Enter an option: ");
 		    String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
 	    	switch (userInput) {
 	    		case "1"	 	: deleteModule(); break;
-	    		case "2"		: updateModule(); break;
+	    		case "2"		: updateModuleProcedure(); break;
 	    		case "3"		: selectSearchOption(); break;
 	    		case "4"		: selectMainOption(); break;
 	    		default			: System.out.println("\nSorry, that's not an available option.\n");
@@ -182,16 +200,23 @@ public class ModuleApp {
 
     // TODO: Print out nothing's found if nothing's found
     // FIXME: Fix empty search by leadername results bug
-    static void searchByCode()  throws InvalidQueryFormatException {  search("code", "Enter the exact module code: "); }
-    static void searchByYear()  throws InvalidQueryFormatException {  search("year", "Enter modules' year level: "); }
-    static void searchByName()  throws InvalidQueryFormatException {  search("name", "Enter modules' leader name: "); }
-    static void searchByEmail()  throws InvalidQueryFormatException { search("email", "Enter modules' leader email: "); }
-    private static void search(String method, String promptMessage) throws InvalidQueryFormatException {
+    static void searchByCode()
+    	throws InvalidQueryFormatException, NonexistentModuleException, EmptyValueException 
+	    {  search("code", "Enter the exact module code: "); }
+    static void searchByYear()
+    	throws InvalidQueryFormatException, NonexistentModuleException, EmptyValueException 
+	    {  search("year", "Enter modules' year level: "); }
+    static void searchByName()
+    	throws InvalidQueryFormatException, NonexistentModuleException, EmptyValueException 
+	    {  search("name", "Enter modules' leader name: "); }
+    static void searchByEmail()
+    	throws InvalidQueryFormatException, NonexistentModuleException, EmptyValueException 
+	    { search("email", "Enter modules' leader email: "); }
+    private static void search(String method, String promptMessage) throws InvalidQueryFormatException, NonexistentModuleException, EmptyValueException {
 		try {
 			System.out.print(promptMessage);		
 		    String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
 	    	Module[] searchResults = null;
-	    	System.out.print("user input: " + userInput);
 	    	try {
 				switch(method) {
 					case "code"  : searchResults = modulesDB.findModuleRowByCode(userInput); break;
@@ -200,16 +225,18 @@ public class ModuleApp {
 					case "email" : searchResults = modulesDB.findModuleRowsByLeader("email", userInput); break;
 					default      : break;
 				}
-			} catch (InvalidQueryFormatException e) {
+			} catch (InvalidQueryFormatException | InvalidModuleFormatException | EmptyValueException e) {
 				System.out.println("\n(!) " + e.getMessage() + "\n");
 				selectSearchOption();
 			}
 			if (searchResults.length == 0) {
 				printNoResults();
+				selectSearchOption();
 			} else {
 				printOutModules(searchResults);
+				selectCRUDoption();
 			}
-			selectSearchOption();
+			
 		} catch (IOException ioe) {
 			System.out.println("Oops..somethign went wrong.");
 			System.exit(1);
@@ -259,8 +286,13 @@ public class ModuleApp {
 		try {
 			modulesDB.loadCSVFile(fileName);
 			System.out.println("Success! The database has been loaded.\n");
+		} catch(FileIntegrityException e){
+			System.out.println("\n" + e.getMessage() + "\n");
+			addFileProcedure();
 		} catch (Exception e){
+			System.out.println("\n" + e.getMessage() + "\n");
 			System.out.println("Oops..somethign went wrong.");
+			System.exit(1);
 		}
     }
 
