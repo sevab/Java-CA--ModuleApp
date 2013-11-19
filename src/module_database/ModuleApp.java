@@ -140,12 +140,9 @@ public class ModuleApp {
 					}
 					
 
-				} catch (Exception e) {
-					// TODO: catch Java 7-style
-					if (e instanceof InvalidModuleFormatException || e instanceof EmptyValueException) {
-						moduleArgs[i] = null;
-						System.out.println("\n(!) " + e.getMessage() + "\n");
-					} else { throw new RuntimeException(e); }
+				} catch (InvalidModuleFormatException | EmptyValueException e) {
+					moduleArgs[i] = null;
+					System.out.println("\n(!) " + e.getMessage() + "\n");
 				}
 			}
 		}
@@ -158,11 +155,9 @@ public class ModuleApp {
 				    			System.out.println("\nSuccess! The module has been updated.\n");
 								break;
     		}
-    	} catch  (Exception e) {
-			if (e instanceof InvalidModuleFormatException || e instanceof EmptyValueException || e instanceof DuplicateModuleException) {
-				System.out.println("\n(!) " + e.getMessage() + "\n");
+    	} catch  (InvalidModuleFormatException | EmptyValueException | DuplicateModuleException e) {
+			System.out.println("\n(!) " + e.getMessage() + "\n");
 				// No action following fail, since fails should not happen (all validations have been made)
-			}
     	}
 		// TODO: printModule? e.g. => added Module Code: "ECM1234" Module Title: "sdfsd"...
 		selectMainOption();
