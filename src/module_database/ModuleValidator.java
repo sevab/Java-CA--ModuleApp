@@ -16,24 +16,58 @@ public class ModuleValidator {
 	private static String invalidModuleCodeFormatErrorMessage = "You've entered invalid module code. Please enter a module code in the format ABC1234, ABC2234, ABC3234 or ABCM123.";
 	private static String invalidEmailFormatErrorMessage = "You've entered an invalid email. Please, make sure it's in the format xyz@exeter.ac.uk or xyz@ex.ac.uk.";
 
-
-	public static void validateModuleValues(String code, String title, String leaderName, String leaderEmail) throws InvalidModuleFormatException, EmptyValueException {
+    /**
+     *
+     * @param code
+     * @param title
+     * @param leaderName
+     * @param leaderEmail
+     * @throws InvalidModuleFormatException
+     * @throws EmptyValueException
+     */
+    public static void validateModuleValues(String code, String title, String leaderName, String leaderEmail) throws InvalidModuleFormatException, EmptyValueException {
 		validateCode(code);
 		validateTitle(title);
 		validateLeaderName(leaderName);
 		validateEmail(leaderEmail);
 	}
-	public static void validateCode(String moduleCode) throws InvalidModuleFormatException, EmptyValueException {
+
+    /**
+     *
+     * @param moduleCode value to validate
+     * @throws InvalidModuleFormatException
+     * @throws EmptyValueException
+     */
+    public static void validateCode(String moduleCode) throws InvalidModuleFormatException, EmptyValueException {
 	    validadeEmptyness(moduleCode, emptyModuleCodeErrorMessage);
 	    validatePattern(moduleCode, "[A-Z]{3}(1|2|3|M)\\d{3}", invalidModuleCodeFormatErrorMessage);
 	}
-	public static void validateEmail(String email) throws InvalidModuleFormatException, EmptyValueException  {
+
+    /**
+     *
+     * @param email value to validate
+     * @throws InvalidModuleFormatException
+     * @throws EmptyValueException
+     */
+    public static void validateEmail(String email) throws InvalidModuleFormatException, EmptyValueException  {
 	    validadeEmptyness(email, emptyModuleLeaderEmailErrorMessage);
 	    validatePattern(email, ".+\\@(exeter.ac.uk|ex.ac.uk)", invalidEmailFormatErrorMessage);
 	}
+
+    /**
+     *
+     * @param moduleTitle value to validate
+     * @throws EmptyValueException
+     */
     public static void validateTitle(String moduleTitle) throws EmptyValueException {
     	validadeEmptyness(moduleTitle, emptyModuleTitleErrorMessage);
     }
+
+    /**
+     *
+     * @param leaderName value to validate
+     * @throws EmptyValueException
+     */
     public static void validateLeaderName(String leaderName) throws EmptyValueException {
 		validadeEmptyness(leaderName, emptyModuleLeaderNameErrorMessage);
     }

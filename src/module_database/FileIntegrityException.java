@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package module_database;
 
 /**
@@ -9,9 +5,15 @@ package module_database;
  * @author sevabaskin
  */
 public class FileIntegrityException extends Exception {
-	public FileIntegrityException() {
+
+    public FileIntegrityException() {
         super();
     }
+
+    /**
+     *
+     * @param message
+     */
     public FileIntegrityException(String message) {
         super(message);
     }

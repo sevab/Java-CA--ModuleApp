@@ -13,16 +13,26 @@ import java.util.regex.Pattern;
 /**
  *
  * @author sevabaskin
+ * Student ID 610051863
  */
-class ModulesDatabase {
+public class ModulesDatabase {
     private File databaseFile;
     private Module[] db;
 
     ModulesDatabase() {    }
-
-    // JavaDoc: loads CSV file from its file path on the filesystem
-    // e.g. on Mac OS: /Users/BillGates/Documents/modules_database.csv
-
+    
+    /**
+     * Reads CSV file from the filepath on the filesystem.
+     * Example on a Mac OS: /Users/BillGates/Documents/modules_database.csv
+     * 
+     * @param databaseFileDirectory
+     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws InvalidModuleFormatException if one of the records in the CSV file does not have valid properties of a module
+     * @throws EmptyValueException if one of the fields of a module record in the CSV file is empty
+     * @throws FileIntegrityException to notify the user that either InvalidModuleFormatException or EmptyValueException
+     *         has been caught while reading their CSV file.
+     */
     synchronized void loadCSVFile(String databaseFileDirectory)
         throws FileNotFoundException, IOException, InvalidModuleFormatException, EmptyValueException, FileIntegrityException {
         // Create an array as large as there're numbers in a csv file:
@@ -55,6 +65,14 @@ class ModulesDatabase {
         }
     }
 
+    /**
+     * 
+     * @param query
+     * @return an array of Module class instances whose code-attribute fully matches the query.
+     *         an empty Module class array is returned if nothing's found
+     * @throws InvalidModuleFormatException when the module code value does not match the format constraints for module code
+     * @throws EmptyValueException if the query is empty 
+     */
     Module[] findByCode(String query) throws InvalidModuleFormatException, EmptyValueException {
         ModuleValidator.validateCode(query);
         Module[] resultRow = {};
@@ -67,9 +85,13 @@ class ModulesDatabase {
         return resultRow;
     }
 
-
-
-    // JavaDoc: Describe how strings are used to generte dynamyc-length arrays
+    /**
+     * 
+     * @param query
+     * @return an array of Module class instances whose year value matches the query
+     *         an empty Module class array is returned if nothing's found
+     * @throws InvalidQueryFormatException if a query value different than 1,2,3 or M is passed
+     */
     Module[] findByYear(String query) throws InvalidQueryFormatException {
         if (query.length() == 0) return new Module[]{};
         ModuleAppHelper.validateModuleYearQuery(query);
@@ -88,10 +110,16 @@ class ModulesDatabase {
         }
     }
 
-    // JavaDoc returns empty array if nothing's found or the query's empty
+    /**
+     * 
+     * @param method can only take value "name" or "email". Specifies whether to search modules by leader's name or email
+     * @param query
+     * @return an array of Module class instances whose leaderName or leaderEmail attribute matches the query
+     *         an empty Module class array is returned if nothing's found
+     */
     Module[] findByLeader(String method, String query) {
         if (query.length() == 0) return new Module[]{};
-        // if method is smth else, throw some sort of exception? or turn methods into enums
+        // TODO: if method is smth else, throw some sort of exception? or turn methods into enums
         String resultRows = "";
         Pattern pattern = null;
         switch(method) {
@@ -113,10 +141,21 @@ class ModulesDatabase {
         }
     }
 
-
-
-
-
+    /**
+     * Updates only those attributes of an existing module that are passed in the signature. If an empty
+     * string is passed for a particular attribute (e.g. newModuleCode), that attribute will not be updated.
+     *
+     * @param moduleCode the code of the module to update
+     * @param newModuleCode
+     * @param newModuleTitle
+     * @param newModuleLeaderName
+     * @param newModuleLeaderEmail
+     * @throws InvalidModuleFormatException when an attribute value does not match the format constraints for module's attributes
+     * @throws EmptyValueException
+     * @throws DuplicateModuleException when newModuleCode already exists in the database
+     *         (not including the module code of the module to be updated).
+     * @throws NonexistentModuleException when trying to update a module that is not held in the database
+     */
     synchronized void updateModule(String moduleCode, String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail)
         throws InvalidModuleFormatException, EmptyValueException, DuplicateModuleException, NonexistentModuleException {
         // Update this.db array array:
@@ -152,6 +191,11 @@ class ModulesDatabase {
         }.start();
     }
 
+    /**
+     * 
+     * @param moduleCode of the module to be deleted
+     * @throws NonexistentModuleException when trying to delete a module that is not held in the database
+     */
     synchronized void deleteModule(String moduleCode) throws NonexistentModuleException{
 
         // get module row and verify exists
@@ -173,7 +217,16 @@ class ModulesDatabase {
         }.start();
 
     }
-
+    /**
+     * 
+     * @param newModuleCode
+     * @param newModuleTitle
+     * @param newModuleLeaderName
+     * @param newModuleLeaderEmail
+     * @throws DuplicateModuleException when trying to add a duplicate
+     * @throws InvalidModuleFormatException when an attribute value does not match the format constraints for module's attributes
+     * @throws EmptyValueException 
+     */
     synchronized void createModule(String newModuleCode, String newModuleTitle, String newModuleLeaderName, String newModuleLeaderEmail) throws DuplicateModuleException, InvalidModuleFormatException, EmptyValueException {
         verifyNotDuplicate(newModuleCode);
         // Expand database:
@@ -188,28 +241,47 @@ class ModulesDatabase {
         
         new Thread() {
             public void run() {
-                ModuleAppHelper.appendLineToFile(databaseFile, line); // append line to the databaseCSVfile
+                ModuleAppHelper.appendLineToFile(databaseFile, line);
             }
         }.start();
     }
 
 
-    // Getters
+    /**
+     * Used in jUnit testing
+     *
+     * @return a copy of the module database array.
+     */
     Module[] getDb() {
         return this.db;
     }
-    // get Module by row is a better name
+    /**
+     * 
+     * @param moduleRow
+     * @return an instance of a module class from the database
+     */
     Module getModuleByRow(int moduleRow) {
         return this.db[moduleRow];
     }
-    Module[] getModulesByRow(int[] modulesIDs) {
-        Module[] modulesArray = new Module[modulesIDs.length];
-        for (int i=0; i<modulesIDs.length; i++) {
-            modulesArray[i] = getModuleByRow(modulesIDs[i]);
+    /**
+     * 
+     * @param modulesRows
+     * @return an array of module instances from the database
+     */
+    Module[] getModulesByRow(int[] modulesRows) {
+        Module[] modulesArray = new Module[modulesRows.length];
+        for (int i=0; i<modulesRows.length; i++) {
+            modulesArray[i] = getModuleByRow(modulesRows[i]);
         }
         return modulesArray;
     }
-     // returns row of the module in the db array. throws NonexistentModuleException module exception if nothing's found
+
+    /**
+     * 
+     * @param moduleCode
+     * @return the position of a module instance whose module code matches the value of passed moduleCode
+     * @throws NonexistentModuleException throws an exception if no module with the code moduleCode is found
+     */
     int getModuleRow(String moduleCode) throws NonexistentModuleException {
         int result = -1;
         for (int i=0; i< this.db.length; i++) {
@@ -222,7 +294,12 @@ class ModulesDatabase {
             throw new NonexistentModuleException("The module you have entered does not exist. Try again.");
         return result;
     }
-    // Helpers
+
+    /**
+     * 
+     * @param moduleCode
+     * @throws DuplicateModuleException if the database holds a module whose code value matches moduleCode value 
+     */
     void verifyNotDuplicate(String moduleCode) throws DuplicateModuleException {
         for (Module module : this.db) {
             if (module.getCode().equals(moduleCode)){

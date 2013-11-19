@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package module_database;
 
 /**
@@ -9,9 +5,16 @@ package module_database;
  * @author sevabaskin
  */
 public class InvalidModuleFormatException extends Exception {
-	public InvalidModuleFormatException() {
+
+
+    public InvalidModuleFormatException() {
         super();
     }
+
+    /**
+     *
+     * @param message
+     */
     public InvalidModuleFormatException(String message) {
         super(message);
     }

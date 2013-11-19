@@ -4,7 +4,7 @@ package module_database;
  *
  * @author sevabaskin
  */
-class Module {
+public class Module {
 	String code;
 	String title;
 	String leaderName;
@@ -42,9 +42,6 @@ class Module {
 		ModuleValidator.validateEmail(newLeaderEmail);
 		this.leaderEmail = newLeaderEmail;
 	}
-
-	// Helpers
-	// rename toStringArray
 	String[] getFullInfo() {
     	return new String[]{ this.code, this.title, this.leaderName, this.leaderEmail };
     }

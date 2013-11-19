@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package module_database;
 
 import java.io.BufferedReader;
@@ -23,12 +19,12 @@ import java.util.regex.Pattern;
  * @author sevabaskin
  */
 public class ModuleAppHelper {
-    // TODO: split into ModuleUtils & ModuleFileHandler classes?
 
-
-
-
-
+    /**
+     * 
+     * @param query
+     * @throws InvalidQueryFormatException when query is other than 1,2,3,M
+     */
     static void validateModuleYearQuery(String query) throws InvalidQueryFormatException {
         String pattern = "(1|2|3|M)";
         Pattern regex = Pattern.compile(pattern);
@@ -37,17 +33,12 @@ public class ModuleAppHelper {
             throw new InvalidQueryFormatException("Your query '" + query + "' is invalid. Make sure it's one of these: 1,2,3 or M.");
     }
 
-
-
-
-
-
-
-
-
-
-	static void appendLineToFile(File file, String line) {
-        // maybe should return a boolean if successful
+    /**
+     * 
+     * @param file
+     * @param line
+     */
+    static void appendLineToFile(File file, String line) {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
             bw.write(line+"\n");
@@ -55,7 +46,11 @@ public class ModuleAppHelper {
         } catch (IOException e) {}
     }
 
-
+    /**
+     * 
+     * @param oldFile
+     * @param newFile
+     */
     static void replaceFile(File oldFile, File newFile) {
         if (oldFile.delete()) {
             newFile.renameTo(oldFile);      // Rename new database file to the original name
@@ -63,8 +58,15 @@ public class ModuleAppHelper {
         }
     }
 
-
-	// Used by Test Suite to read a particular line in a file
+    /**
+     * Used by Test suite to read a particular line in a file
+     *
+     * @param fileDirectory
+     * @param lineNumber
+     * @return
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
     static String getCsvLine(String fileDirectory, int lineNumber) throws FileNotFoundException, IOException {
         // FIXME: make sure line's not empty
         BufferedReader reader = new BufferedReader(new FileReader(fileDirectory));
@@ -79,7 +81,14 @@ public class ModuleAppHelper {
         return line;
     }
 
-	// Used to determine the length of the database array that needs to be created
+    /**
+     * Used to determine the length of the database array that needs to be created 
+     *
+     * @param fileDirectory
+     * @return
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
     static int linesInAFile(String fileDirectory) throws FileNotFoundException, IOException {
         BufferedReader reader = new BufferedReader(new FileReader(fileDirectory));
         int lines = 0;
@@ -90,7 +99,16 @@ public class ModuleAppHelper {
 
 
 
-	// Used by search modules to  dynamically create arrays from strings
+    /**
+     * Used by search methods to create integer arrays from a string of integers separated by comas.
+     * Since only data structures from java.lang.* are allowed, this hack is used to efficiently create
+     * arrays of exact size when not knowing the number of array-elements in advance. Alternative
+     * methods would either involbe recreating a new array every time a new element is added or
+     * creating a large array, and keeping track of elements used, then expanding array once it's full.
+     *
+     * @param str
+     * @return 
+     */
     static int[] convertStringToIntArray(String str) {
 		String[] strArray = str.split(",");
         System.out.println("str: " + str);
@@ -101,7 +119,15 @@ public class ModuleAppHelper {
 		return intArray;
     }
 
-
+    /**
+     * Substitutes a line in a file with substituteLine string when "update" method is passed.
+     * Deletes a particular line in a file when a "delete" method is passed.
+     *
+     * @param file
+     * @param lineNumber
+     * @param action
+     * @param substituteLine 
+     */
     static void modifyLineInAFile(File file, int lineNumber, String action, String substituteLine) {
        File tempFile = new File("temp_" + file.getName());
         BufferedReader br = null;
@@ -136,18 +162,19 @@ public class ModuleAppHelper {
         ModuleAppHelper.replaceFile(file, tempFile);
     }
 
-
-
-
-
-   // To be used by the test suite to restore the database back to its original state after modification
+    /**
+     * Used by the test suite to restore the database back to its original state after test modifications
+     * 
+     * @param backupFilePath
+     * @param destinationFilePath
+     * @throws IOException 
+     */
     static void restoreDatabaseFileFromBackUp(String backupFilePath, String destinationFilePath) throws IOException {
         File backupFile = new File(backupFilePath);
         File destinationFile = new File(destinationFilePath);
-        // TODO: might want to do something else
         if(!destinationFile.exists()) {
             destinationFile.createNewFile();
-        }
+        } // TODO: else?
         FileChannel source = null;
         FileChannel destination = null;
         try {
@@ -164,8 +191,4 @@ public class ModuleAppHelper {
             }
         }
     }
-
-    // static void isNotEmpty(String str) {
-    //     return (str.equals("")) ? false : true;
-    // }
 }

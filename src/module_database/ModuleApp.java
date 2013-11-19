@@ -13,7 +13,15 @@ public class ModuleApp {
 	private static ModulesDatabase modulesDB;
 // 			/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/test/module_database/test_modules.csv
 
-	public static void main(String[] args) throws IOException, InvalidQueryFormatException, NonexistentModuleException, EmptyValueException   {
+    /**
+     *
+     * @param args
+     * @throws IOException
+     * @throws InvalidQueryFormatException
+     * @throws NonexistentModuleException
+     * @throws EmptyValueException
+     */
+    public static void main(String[] args) throws IOException, InvalidQueryFormatException, NonexistentModuleException, EmptyValueException   {
 		System.out.println("##################################### ");
 		System.out.println("Welcome to the Modules Database app!\n");
 		addFileProcedure();
@@ -76,8 +84,6 @@ public class ModuleApp {
 			quitWithAnError();
 		}
     }
-
-// 			/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/test/module_database/test_modules.csv
 
     static void deleteModule() throws InvalidQueryFormatException, EmptyValueException {
     	try {
@@ -163,12 +169,6 @@ public class ModuleApp {
 		selectMainOption();
     }
 
-		// 			/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/test/module_database/test_modules.csv
-
-
-
-
-
 
     // ########################      SEARCH      ####################################
 
@@ -188,7 +188,7 @@ public class ModuleApp {
 			System.out.print("Enter an option: ");		
 		    String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
 	    	switch (userInput) {
-	    		case "0": printOutModules(modulesDB.getDb()); selectSearchOption(); break;
+	    		case "0": printOutModules(modulesDB.getDb()); selectCRUDoption(); break;
 	    		case "1": searchByCode(); break;
 	    		case "2": searchByYear(); break;
 	    		case "3": searchByName(); break;
@@ -197,7 +197,7 @@ public class ModuleApp {
 	    		case "x": System.exit(0);
 	    		case "X": System.exit(0);
 	    		default : System.out.println("\nSorry, that's not an available option.\n");
-	    				  selectSearchOption(); //TODO: extract into a helper to use by other methods as well
+	    				  selectSearchOption();
 	    	}
 		} catch (IOException e) {
 			quitWithAnError();
@@ -258,10 +258,7 @@ public class ModuleApp {
     	System.out.println("\n");
     }
 
-
-
-
-    // ########################      FILE      ####################################
+    // ########################      FILE HANDLING     ####################################
 
     static void addFileProcedure() {
 		// Getting file path
@@ -299,13 +296,5 @@ public class ModuleApp {
     	System.out.println("Oops..somethign went wrong.");
 		System.exit(1);
     }
-
-
-
-	// 			/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/test/module_database/test_modules.csv
-
-
-
-
 }
 // TODO: before quiting wait till all threads finish executing
