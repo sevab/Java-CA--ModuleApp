@@ -1,5 +1,3 @@
-// TODO: before quiting wait till all threads finish executing
-
 package module_database;
 
 import java.io.BufferedReader;
@@ -85,7 +83,7 @@ public class ModuleApp {
     	try {
 			System.out.print("Delete module with the code: ");		
 		    String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
-	    	modulesDB.deleteModuleByModuleCode(userInput);
+	    	modulesDB.deleteModule(userInput);
 	    	// if found
 			System.out.println("\nThe module " + userInput + " has been successfuly removed from the database\n");
 			selectMainOption();
@@ -154,7 +152,7 @@ public class ModuleApp {
     			case "create" : modulesDB.createModule(moduleArgs[0], moduleArgs[1], moduleArgs[2], moduleArgs[3]);
     				    		System.out.println("\nSuccess! Module " + moduleArgs[0] + " has been added.\n");
 								break;
-    			case "update" : modulesDB.updateModuleByModuleCode(moduleToUpdate, moduleArgs[0], moduleArgs[1], moduleArgs[2], moduleArgs[3]);
+    			case "update" : modulesDB.updateModule(moduleToUpdate, moduleArgs[0], moduleArgs[1], moduleArgs[2], moduleArgs[3]);
 				    			System.out.println("\nSuccess! Module has been updated.\n");
 								break;
     		}
@@ -220,10 +218,10 @@ public class ModuleApp {
 	    	Module[] searchResults = null;
 	    	try {
 				switch(method) {
-					case "code"  : searchResults = modulesDB.findModuleRowByCode(userInput); break;
-					case "year"  : searchResults = modulesDB.findModuleRowsByYear(userInput); break;
-					case "name"  : searchResults = modulesDB.findModuleRowsByLeader("name",  userInput); break;
-					case "email" : searchResults = modulesDB.findModuleRowsByLeader("email", userInput); break;
+					case "code"  : searchResults = modulesDB.findByCode(userInput); break;
+					case "year"  : searchResults = modulesDB.findByYear(userInput); break;
+					case "name"  : searchResults = modulesDB.findByLeader("name",  userInput); break;
+					case "email" : searchResults = modulesDB.findByLeader("email", userInput); break;
 					default      : break;
 				}
 			} catch (InvalidQueryFormatException | InvalidModuleFormatException | EmptyValueException e) {
@@ -310,3 +308,4 @@ public class ModuleApp {
 
 
 }
+// TODO: before quiting wait till all threads finish executing
