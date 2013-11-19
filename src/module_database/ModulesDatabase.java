@@ -158,10 +158,10 @@ class ModulesDatabase {
 
         // If not empty & not the same as existing value
         Module moduleToUpdate = getModule(moduleRow);
-
-        if (!newModuleCode.equals("") && !newModuleCode.equals(moduleToUpdate.getCode()))
+        if (!newModuleCode.equals("") && !newModuleCode.equals(moduleToUpdate.getCode())){
             verifyNotDuplicate(newModuleCode);
             moduleToUpdate.setCode(newModuleCode);
+        }
         if (!newModuleTitle.equals(""))
             moduleToUpdate.setTitle(newModuleTitle);
         if (!newModuleLeaderName.equals(""))
@@ -169,15 +169,13 @@ class ModulesDatabase {
         if (!newModuleLeaderEmail.equals(""))
             moduleToUpdate.setLeaderEmail(newModuleLeaderEmail);
 
-
-
         // update the CSV file
         // TODO: Move to thread
         final String substituteLine = "\""+ moduleToUpdate.getCode() +
                                       "\",\"" + moduleToUpdate.getTitle()  +
                                       "\",\"" + moduleToUpdate.getLeaderName()  +
                                       "\",\"" + moduleToUpdate.getLeaderEmail() +"\"";
-        
+
         new Thread() {
             public void run() {
                 ModuleAppHelper.modifyLineInAFile(databaseFile, moduleRow, "update", substituteLine);
@@ -187,7 +185,6 @@ class ModulesDatabase {
         }.start();
 
         // ModuleAppHelper.modifyLineInAFile(this.databaseFile, moduleRow, "update", substituteLine);
-
     }
 
     // deleteModule isn't really needed, can rewrite deleteModuleByModuleCode to do the same

@@ -1,6 +1,5 @@
 // TODO: make sure a line is added to the file
 // TODO: before quiting wait till all threads finish executing
-// TODO: change default action to repeat itself rather than delete an application
 
 package module_database;
 
@@ -45,6 +44,55 @@ public class ModuleApp {
 		}
 
     }
+
+
+
+    // ########################      CRUD      ####################################
+
+        // TODO: don't quit if else is written, simply reprint itself
+    static void printCRUDoptions() {
+		System.out.println("Select one of the following options:");
+    	System.out.println("====================================");
+    	System.out.println("(1) Delete a module");
+    	System.out.println("(2) Update a module");
+    	System.out.println("(3) Return to search menu");
+    	System.out.println("(4) Return to main menu");
+    }
+
+    static void selectCRUDoption() throws InvalidQueryFormatException, NonexistentModuleException, EmptyValueException {
+    	printCRUDoptions();
+    	try {
+			System.out.print("Enter an option: ");
+		    String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
+	    	switch (userInput) {
+	    		case "1"	 	: deleteModule(); break;
+	    		case "2"		: updateModuleProcedure(); break;
+	    		case "3"		: selectSearchOption(); break;
+	    		case "4"		: selectMainOption(); break;
+	    		default			: System.out.println("\nSorry, that's not an available option.\n");
+	    						  selectCRUDoption();
+	    	}
+		} catch (IOException ioe) {
+			System.out.println("Oops..somethign went wrong.");
+			System.exit(1);
+		}
+    }
+
+
+    // catch ModuleNotFound & blank exceptions
+    static void deleteModule() {
+    	try {
+			System.out.print("Delete module with the code: ");		
+		    String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
+	    	modulesDB.deleteModuleByModuleCode(userInput);
+	    	// if found
+			System.out.print("The module " + userInput + " has been successfuly removed from the database");
+		} catch (IOException ioe) {
+			System.out.println("Oops..somethign went wrong.");
+			System.exit(1);
+		}
+    }
+
     static void updateModuleProcedure() throws IOException, InvalidQueryFormatException, NonexistentModuleException, EmptyValueException {
     	try {
 			System.out.print("Enter code of the module to update: ");
@@ -104,10 +152,10 @@ public class ModuleApp {
     	try {
     		switch(method) {
     			case "create" : modulesDB.createModule(moduleArgs[0], moduleArgs[1], moduleArgs[2], moduleArgs[3]);
-    				    		System.out.println("Success! The module has been updated.");
+    				    		System.out.println("\nSuccess! The module has been added.\n");
 								break;
     			case "update" : modulesDB.updateModuleByModuleCode(moduleToUpdate, moduleArgs[0], moduleArgs[1], moduleArgs[2], moduleArgs[3]);
-				    			System.out.println("Success! The module has been added.");
+				    			System.out.println("\nSuccess! The module has been updated.\n");
 								break;
     		}
     	} catch  (Exception e) {
@@ -122,6 +170,12 @@ public class ModuleApp {
 
 		// 			/Users/sevabaskin/Dropbox/2nd Year/Java/CW1/Coursework 1/test/module_database/test_modules.csv
 
+
+
+
+
+
+    // ########################      SEARCH      ####################################
 
     static void printSearchOptions() {
     	System.out.println("Select one of the following search options:");
@@ -154,50 +208,6 @@ public class ModuleApp {
 			System.exit(1);
 		}
     }
-
-    static void printCRUDoptions() {
-		System.out.println("Select one of the following options:");
-    	System.out.println("====================================");
-    	System.out.println("(1) Delete a module");
-    	System.out.println("(2) Update a module");
-    	System.out.println("(3) Return to search menu");
-    	System.out.println("(4) Return to main menu");
-    }
-    // TODO: don't quit if else is written, simply reprint itself
-    static void selectCRUDoption() throws InvalidQueryFormatException, NonexistentModuleException, EmptyValueException {
-    	printCRUDoptions();
-    	try {
-			System.out.print("Enter an option: ");
-		    String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
-	    	switch (userInput) {
-	    		case "1"	 	: deleteModule(); break;
-	    		case "2"		: updateModuleProcedure(); break;
-	    		case "3"		: selectSearchOption(); break;
-	    		case "4"		: selectMainOption(); break;
-	    		default			: System.out.println("\nSorry, that's not an available option.\n");
-	    						  selectCRUDoption();
-	    	}
-		} catch (IOException ioe) {
-			System.out.println("Oops..somethign went wrong.");
-			System.exit(1);
-		}
-    }
-
-    // catch ModuleNotFound & blank exceptions
-    static void deleteModule() {
-    	try {
-			System.out.print("Delete module with the code: ");		
-		    String userInput = (new BufferedReader(new InputStreamReader(System.in))).readLine();
-	    	modulesDB.deleteModuleByModuleCode(userInput);
-	    	// if found
-			System.out.print("The module " + userInput + " has been successfuly removed from the database");
-		} catch (IOException ioe) {
-			System.out.println("Oops..somethign went wrong.");
-			System.exit(1);
-		}
-    }
-
-
     // TODO: Print out nothing's found if nothing's found
     // FIXME: Fix empty search by leadername results bug
     static void searchByCode()
@@ -261,6 +271,7 @@ public class ModuleApp {
 
 
 
+    // ########################      FILE      ####################################
 
     static void addFileProcedure() {
 		// Getting file path
